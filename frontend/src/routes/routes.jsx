@@ -4,6 +4,7 @@ import EmployeeList from '../pages/EmployeeList.jsx'
 import Payroll from '../pages/Payroll.jsx'
 import TotalSalaries from '../pages/TotalSalaries.jsx'
 import OtherExpenses from '../pages/OtherExpenses.jsx'
+import FinancialAnalytics from '../pages/FinancialAnalytics.jsx'
 
 export function createAppRouter() {
   return createBrowserRouter(
@@ -13,6 +14,7 @@ export function createAppRouter() {
         <Route path="/employees" element={<EmployeeList />} />
         <Route path="/payroll" element={<Payroll />} />
         <Route path="/total-salaries" element={<TotalSalaries />} />
+        <Route path="/financial-analytics" element={<FinancialAnalytics />} />
         <Route path="/other-expenses" element={<OtherExpenses />} />
       </>,
     ),

@@ -1,182 +1,351 @@
-import Navbar from '../components/Navbar.jsx'
-import Footer from '../components/Footer.jsx'
-import { NavLink } from 'react-router-dom'
+import Navbar from "../components/Navbar.jsx";
+import Footer from "../components/Footer.jsx";
+import { Cell, Funnel, FunnelChart, LabelList, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
-const employees = [
+const overviewStats = [
   {
-    id: 'EMP-001',
-    name: 'Dr. Kavita Kulkarni',
-    designation: 'Chief Medical Officer',
-    clinic: 'Central Clinic',
+    label: "Hired",
+    value: "2",
+    subtitle: "Offers accepted this month",
+    change: "+1 vs July",
+    changeTone: "text-emerald-600",
+    gradient: "from-sky-50 via-cyan-50 to-white",
+    progress: 45,
+    progressColor: "bg-sky-500",
+    progressLabel: "45% of quarterly target",
   },
   {
-    id: 'EMP-002',
-    name: 'Rahul Deshmukh',
-    designation: 'Senior Nurse',
-    clinic: 'Pediatrics Unit',
+    label: "Apps Per Hire",
+    value: "2.1",
+    subtitle: "Quality of applicant pipeline",
+    change: "-0.4 vs benchmark",
+    changeTone: "text-amber-600",
+    gradient: "from-amber-50 via-amber-100 to-white",
+    progress: 65,
+    progressColor: "bg-amber-500",
+    progressLabel: "Pipeline health 65%",
   },
   {
-    id: 'EMP-003',
-    name: 'Nikita Jadhav',
-    designation: 'HR & Payroll Specialist',
-    clinic: 'Corporate Office',
+    label: "Days to Hire",
+    value: "5",
+    subtitle: "Average time from application",
+    change: "-2 days vs last month",
+    changeTone: "text-emerald-600",
+    gradient: "from-emerald-50 via-teal-50 to-white",
+    progress: 72,
+    progressColor: "bg-emerald-500",
+    progressLabel: "Service-level 72%",
   },
   {
-    id: 'EMP-004',
-    name: 'Prakash Patil',
-    designation: 'Lab Technician',
-    clinic: 'Diagnostics Center',
+    label: "Cost Per Hire",
+    value: "₹1400",
+    subtitle: "Recruiting spend per hire",
+    change: "+₹120 vs budget",
+    changeTone: "text-rose-600",
+    gradient: "from-rose-50 via-rose-100 to-white",
+    progress: 58,
+    progressColor: "bg-rose-500",
+    progressLabel: "Budget used 58%",
   },
   {
-    id: 'EMP-005',
-    name: 'Sneha More',
-    designation: 'Physiotherapist',
-    clinic: 'Rehabilitation Clinic',
+    label: "Open Positions",
+    value: "5",
+    subtitle: "Roles awaiting final interviews",
+    change: "2 critical",
+    changeTone: "text-sky-600",
+    gradient: "from-indigo-50 via-sky-50 to-white",
+    progress: 33,
+    progressColor: "bg-indigo-500",
+    progressLabel: "Critical roles 33%",
   },
   {
-    id: 'EMP-006',
-    name: 'Anil Gujar',
-    designation: 'Front Desk Coordinator',
-    clinic: 'Central Clinic',
+    label: "Days in Market",
+    value: "6",
+    subtitle: "Average posting visibility",
+    change: "+1 day vs goal",
+    changeTone: "text-amber-600",
+    gradient: "from-purple-50 via-fuchsia-50 to-white",
+    progress: 52,
+    progressColor: "bg-fuchsia-500",
+    progressLabel: "Exposure 52%",
   },
-  {
-    id: 'EMP-007',
-    name: 'Dr. Manisha Pawar',
-    designation: 'Dermatologist',
-    clinic: 'Skin Care Clinic',
-  },
-  {
-    id: 'EMP-008',
-    name: 'Sujata Kulkarni',
-    designation: 'Pharmacist',
-    clinic: 'Pharmacy Unit',
-  },
-  {
-    id: 'EMP-009',
-    name: 'Vikram Shinde',
-    designation: 'IT Support Specialist',
-    clinic: 'Corporate Office',
-  },
-  {
-    id: 'EMP-010',
-    name: 'Meera Sathe',
-    designation: 'Nutritionist',
-    clinic: 'Wellness Center',
-  },
-]
+];
 
-const totalClinics = new Set(employees.map((employee) => employee.clinic)).size
-const medicalStaffCount = employees.filter((employee) =>
-  employee.designation.toLowerCase().includes('dr') || employee.designation.toLowerCase().includes('nurse'),
-).length
-const supportStaffCount = employees.length - medicalStaffCount
+const monthlyMetrics = [
+  { month: "May 2021", hired: "0", daysToHire: "-", status: "Planning", statusTone: "bg-slate-200 text-slate-600" },
+  { month: "June 2021", hired: "0", daysToHire: "-", status: "Sourcing", statusTone: "bg-sky-100 text-sky-700" },
+  { month: "July 2021", hired: "1", daysToHire: "6", status: "Filled", statusTone: "bg-emerald-100 text-emerald-700" },
+  { month: "August 2021", hired: "x", daysToHire: "x", status: "In progress", statusTone: "bg-amber-100 text-amber-700" },
+];
 
-export default function EmployeeList() {
+const funnelData = [
+  { name: "Application", value: 100 },
+  { name: "Phone Screen", value: 85 },
+  { name: "MGR Interview", value: 75 },
+  { name: "Onsite Interview", value: 65 },
+  { name: "Offer", value: 55 },
+  { name: "Hire", value: 45 },
+];
+
+const funnelColors = ["#5B79F3", "#5B79F3", "#4C68D5", "#3E57B8", "#314699", "#263879"];
+
+const funnelInsights = [
+  { stage: "Application → Phone Screen", drop: "15% drop", note: "Automated acknowledgement reduced wait time" },
+  { stage: "Phone Screen → MGR Interview", drop: "10% drop", note: "Hiring manager capacity improving week-on-week" },
+  { stage: "Onsite → Offer", drop: "10% drop", note: "Offer alignment workshop scheduled for next sprint" },
+];
+
+const pipelineData = [
+  { name: "Application", value: 17, description: "Resume review within 24 hrs" },
+  { name: "Phone Screen", value: 17, description: "Initial HR screening" },
+  { name: "MGR Interview", value: 17, description: "Panel of hiring leads" },
+  { name: "Onsite Interview", value: 17, description: "Clinical simulation" },
+  { name: "Offer", value: 17, description: "Compensation negotiation" },
+  { name: "Hire", value: 17, description: "Background & onboarding" },
+];
+
+const pipelineColors = ["#00B9F3", "#2CC4E8", "#41CBE2", "#5DD4DC", "#74DBD7", "#8BE1D1"];
+
+const highlightCards = [
+  {
+    title: "Top Sourcing Channel",
+    value: "Employee referrals",
+    description: "Accounts for 55% of qualified applications with the lowest churn.",
+    color: "bg-emerald-500",
+  },
+  {
+    title: "Urgent Role",
+    value: "ICU Nurse (Night Shift)",
+    description: "3 offers outstanding, final interviews scheduled this week.",
+    color: "bg-rose-500",
+  },
+  {
+    title: "Diversity Goal",
+    value: "58% female hires",
+    description: "On track to meet quarterly objective with current pipeline mix.",
+    color: "bg-sky-500",
+  },
+];
+
+export default function Dashboard() {
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50">
+    <div className="flex min-h-screen flex-col bg-slate-100">
       <Navbar />
-
-      <main className="mx-auto flex w-full max-w-7xl grow flex-col gap-8 px-4 py-8 sm:gap-10 sm:px-6 sm:py-10">
-        <section className="relative overflow-hidden rounded-3xl bg-linear-to-br from-sky-600 via-sky-500 to-indigo-600 px-5 py-8 text-white shadow-2xl shadow-sky-900/20 sm:px-8 sm:py-10">
-          <div className="absolute -right-24 top-1/2 h-64 w-64 -translate-y-1/2 rounded-full bg-white/10 blur-3xl sm:h-80 sm:w-80" />
-          <div className="relative grid gap-6 lg:grid-cols-[1.3fr_1fr] lg:items-center">
-            <div>
-              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-sky-100 sm:text-xs">
-                Employee directory
-              </span>
-              <h1 className="mt-4 text-2xl font-semibold sm:text-3xl lg:text-4xl">
-                Pravara Health Care Staff Overview
-              </h1>
-              <p className="mt-3 max-w-2xl text-xs text-sky-100/80 sm:mt-4 sm:text-sm">
-                Quickly review staffing coverage across clinics, identify specialist availability, and ensure operational excellence with a real-time view of all employees.
-              </p>
-              <div className="mt-5 flex flex-wrap gap-2.5 sm:mt-6 sm:gap-3">
-                <NavLink
-                  to="/payroll"
-                  className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 text-xs font-semibold text-slate-900 shadow-sm shadow-slate-700/30 transition hover:bg-slate-100 sm:px-4 sm:text-sm"
-                >
-                  Sync with payroll
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-4 w-4">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m6-6H6" />
-                  </svg>
-                </NavLink>
-                <NavLink
-                  to="/total-salaries"
-                  className="inline-flex items-center gap-2 rounded-full border border-white/40 px-3 py-2 text-xs font-semibold text-white transition hover:border-white hover:bg-white/10 sm:px-4 sm:text-sm"
-                >
-                  View allowances
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-4 w-4">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2Z" />
-                  </svg>
-                </NavLink>
-              </div>
-            </div>
-            <div className="grid gap-3 rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur sm:gap-4 sm:p-5">
-              {[{ label: 'Total employees', value: employees.length, detail: '+2 onboarding this week' }, { label: 'Clinics covered', value: totalClinics, detail: 'Across Pravara network' }, { label: 'Clinical specialists', value: medicalStaffCount, detail: `${supportStaffCount} supporting staff` }].map((stat) => (
-                <div key={stat.label} className="rounded-xl border border-white/15 bg-white/10 p-3 sm:p-4">
-                  <p className="text-[0.6rem] font-medium uppercase tracking-[0.3em] text-sky-100/80 sm:text-xs">{stat.label}</p>
-                  <p className="mt-2 text-xl font-semibold text-white sm:text-2xl">{stat.value}</p>
-                  <p className="mt-1 text-[0.65rem] font-medium text-sky-100/70 sm:text-xs">{stat.detail}</p>
-                </div>
-              ))}
-            </div>
+      <main className="mx-auto w-full max-w-screen-2xl grow px-4 py-10 sm:px-6 lg:px-10 xl:px-16">
+        <div className="flex flex-col gap-8 rounded-3xl bg-white p-6 shadow-lg shadow-slate-200/40 sm:p-8 xl:p-12">
+        <header className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+          <div>
+            <p className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+              Overview
+            </p>
+            <h1 className="mt-4 text-2xl font-semibold text-slate-900 sm:text-3xl">
+              Monthly Hiring Dashboard with Recruitment Funnel
+            </h1>
           </div>
-        </section>
+          <p className="self-start rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white">
+            August 2021
+          </p>
+        </header>
 
-        <section className="grid gap-3 sm:grid-cols-3 sm:gap-4">
-          {[{ label: 'Most staffed clinic', value: 'Central Clinic', tone: 'bg-emerald-500/10 text-emerald-600' }, { label: 'Average tenure', value: '3.8 years', tone: 'bg-sky-500/10 text-sky-600' }, { label: 'Next performance cycle', value: '15 July 2025', tone: 'bg-amber-500/10 text-amber-600' }].map((item) => (
-            <div key={item.label} className={`rounded-3xl border border-slate-200/70 bg-white/95 p-4 shadow-lg shadow-slate-200/40 sm:p-5`}>
-              <p className="text-[0.65rem] font-medium uppercase tracking-[0.25em] text-slate-400 sm:text-xs">{item.label}</p>
-              <p className={`mt-3 inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${item.tone} sm:text-sm`}>{item.value}</p>
-            </div>
+        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {overviewStats.map((stat) => (
+            <article
+              key={stat.label}
+              className={`group flex flex-col justify-between rounded-3xl border border-white/60 bg-gradient-to-br ${stat.gradient} p-5 shadow-lg shadow-slate-200/50 transition hover:-translate-y-1 hover:shadow-xl sm:p-6`}
+            >
+              <header className="flex items-center justify-between">
+                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-500">{stat.label}</p>
+                <span className="inline-flex items-center gap-1 rounded-full bg-white/70 px-2.5 py-1 text-[0.65rem] font-medium text-slate-500 transition group-hover:bg-white">
+                  {stat.change}
+                </span>
+              </header>
+              <div className="mt-4">
+                <p className="text-3xl font-semibold text-slate-900 sm:text-4xl">{stat.value}</p>
+                <p className="mt-2 text-sm text-slate-600">{stat.subtitle}</p>
+              </div>
+              <div className="mt-5">
+                <div className="h-2 w-full rounded-full bg-white/60">
+                  <div
+                    className={`h-2 rounded-full ${stat.progressColor}`}
+                    style={{ width: `${stat.progress}%` }}
+                  />
+                </div>
+                <p className={`mt-2 text-xs font-semibold ${stat.changeTone}`}>{stat.progressLabel}</p>
+              </div>
+            </article>
           ))}
         </section>
 
-        <section className="overflow-hidden rounded-3xl border border-slate-200/70 bg-white/95 shadow-xl shadow-slate-200/50">
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-slate-200/70 text-left">
-              <thead className="bg-slate-50 text-[0.65rem] font-semibold uppercase tracking-[0.25em] text-slate-500 sm:text-xs">
-                <tr>
-                  <th scope="col" className="px-4 py-3 sm:px-6 sm:py-4">Employee</th>
-                  <th scope="col" className="px-4 py-3 sm:px-6 sm:py-4">Employee ID</th>
-                  <th scope="col" className="px-4 py-3 sm:px-6 sm:py-4">Designation</th>
-                  <th scope="col" className="px-4 py-3 sm:px-6 sm:py-4">Clinic</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 text-xs text-slate-600 sm:text-sm">
-                {employees.map((employee) => (
-                  <tr key={employee.id} className="transition hover:bg-sky-50/60">
-                    <td className="px-4 py-3 sm:px-6 sm:py-4">
-                      <div className="flex items-center gap-3">
-                        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-sky-100 text-xs font-semibold text-sky-600 sm:h-10 sm:w-10 sm:text-sm">
-                          {employee.name
-                            .split(' ')
-                            .slice(0, 2)
-                            .map((part) => part[0])
-                            .join('')}
-                        </span>
-                        <div>
-                          <p className="text-sm font-semibold text-slate-900 sm:text-base">{employee.name}</p>
-                          <p className="text-[0.6rem] font-medium uppercase tracking-[0.25em] text-slate-400 sm:text-xs">{employee.designation}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-slate-500 sm:px-6 sm:py-4">{employee.id}</td>
-                    <td className="px-4 py-3 sm:px-6 sm:py-4">{employee.designation}</td>
-                    <td className="px-4 py-3 sm:px-6 sm:py-4">
-                      <span className="inline-flex rounded-full bg-slate-100 px-3 py-1 text-[0.65rem] font-semibold text-slate-500 sm:text-xs">
-                        {employee.clinic}
-                      </span>
-                    </td>
+        <section className="grid gap-6 lg:grid-cols-[1.1fr_1fr_1fr]">
+          <div className="rounded-2xl border border-slate-200/70 bg-white p-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-slate-900">Monthly Metrics</h2>
+            <div className="mt-4 overflow-hidden rounded-xl border border-slate-200">
+              <table className="w-full text-left text-sm text-slate-600">
+                <thead className="bg-slate-50 text-xs font-semibold uppercase tracking-widest text-slate-500">
+                  <tr>
+                    <th className="px-4 py-3">Month</th>
+                    <th className="px-4 py-3 text-center">Hired</th>
+                    <th className="px-4 py-3 text-center">Days to Hire</th>
+                    <th className="px-4 py-3 text-center">Status</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {monthlyMetrics.map((row, index) => (
+                    <tr
+                      key={row.month}
+                      className={index % 2 === 0 ? "bg-white" : "bg-slate-50/70"}
+                    >
+                      <td className="px-4 py-3 font-medium text-slate-700">{row.month}</td>
+                      <td
+                        className={`px-4 py-3 text-center text-base font-semibold ${
+                          row.hired === "1" ? "text-emerald-600" : "text-slate-600"
+                        }`}
+                      >
+                        {row.hired}
+                      </td>
+                      <td
+                        className={`px-4 py-3 text-center text-base font-semibold ${
+                          row.daysToHire === "6" ? "text-rose-600" : "text-slate-600"
+                        }`}
+                      >
+                        {row.daysToHire}
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        <span className={`inline-flex items-center justify-center rounded-full px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.2em] ${row.statusTone}`}>
+                          {row.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-slate-200/70 bg-white p-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-slate-900">Recruitment Funnel</h2>
+            <div className="mt-4 h-72">
+              <ResponsiveContainer width="100%" height="100%">
+                <FunnelChart>
+                  <Tooltip formatter={(value) => `${value}%`} />
+                  <Funnel
+                    dataKey="value"
+                    data={funnelData}
+                    isAnimationActive={false}
+                    fill="#5B79F3"
+                    stroke="none"
+                  >
+                    {funnelData.map((entry, index) => (
+                      <Cell key={entry.name} fill={funnelColors[index]} />
+                    ))}
+                    <LabelList
+                      position="right"
+                      fill="#1f2937"
+                      stroke="none"
+                      dataKey="name"
+                      formatter={(value, entry) => (entry?.name ? entry.name : value ?? "")}
+                    />
+                    <LabelList
+                      position="inside"
+                      fill="#ffffff"
+                      stroke="none"
+                      dataKey="value"
+                      formatter={(value) => (value !== undefined ? `${value}%` : "")}
+                    />
+                  </Funnel>
+                </FunnelChart>
+              </ResponsiveContainer>
+            </div>
+            <ul className="mt-4 space-y-3">
+              {funnelInsights.map((item) => (
+                <li key={item.stage} className="rounded-2xl border border-slate-200 bg-slate-50/60 px-4 py-3">
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">{item.stage}</p>
+                  <div className="mt-1 flex items-center justify-between text-sm text-slate-700">
+                    <span className="font-semibold text-indigo-600">{item.drop}</span>
+                    <span>{item.note}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="rounded-2xl border border-slate-200/70 bg-white p-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-slate-900">Pipeline Efficiency of Hiring</h2>
+            <p className="mt-1 text-xs font-medium uppercase tracking-[0.25em] text-slate-400">
+              Days taken for each stage in recruitment process
+            </p>
+            <div className="mt-2 h-72">
+              <ResponsiveContainer>
+                <PieChart>
+                  <Tooltip formatter={(value) => `${value}%`} />
+                  <Pie
+                    data={pipelineData}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    innerRadius="55%"
+                    outerRadius="90%"
+                    stroke="none"
+                  >
+                    {pipelineData.map((entry, index) => (
+                      <Cell key={entry.name} fill={pipelineColors[index]} />
+                    ))}
+                  </Pie>
+                  <text
+                    x="50%"
+                    y="50%"
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    className="fill-slate-900 text-2xl font-semibold"
+                  >
+                    100%
+                  </text>
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <ul className="mt-4 grid grid-cols-1 gap-3 text-sm text-slate-600 sm:grid-cols-2">
+              {pipelineData.map((stage, index) => (
+                <li
+                  key={stage.name}
+                  className="flex items-start gap-3 rounded-2xl border border-slate-200/70 bg-slate-50/70 px-3.5 py-3"
+                >
+                  <span
+                    className="mt-1 h-3 w-3 rounded-full"
+                    style={{ backgroundColor: pipelineColors[index] }}
+                    aria-hidden="true"
+                  />
+                  <div>
+                    <p className="text-sm font-semibold text-slate-700">{stage.name}</p>
+                    <p className="text-xs text-slate-500">{stage.description}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
+
+        <section className="grid gap-4 md:grid-cols-3">
+          {highlightCards.map((card) => (
+            <article
+              key={card.title}
+              className="flex flex-col gap-3 rounded-3xl border border-slate-200 bg-white p-6 shadow-lg shadow-slate-200/50"
+            >
+              <span className={`inline-flex w-max items-center rounded-full ${card.color} px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-white`}>
+                {card.title}
+              </span>
+              <p className="text-lg font-semibold text-slate-900">{card.value}</p>
+              <p className="text-sm text-slate-600">{card.description}</p>
+            </article>
+          ))}
+        </section>
+
+        <p className="text-center text-xs text-slate-400">
+          This graph/chart is linked to Excel, and changes automatically based on data. Just left click on it and select “Edit Data”.
+        </p>
+        </div>
       </main>
       <Footer />
     </div>
-  )
+  );
 }
-

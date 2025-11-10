@@ -2,35 +2,32 @@ import { useState } from "react";
 import { NavLink } from "react-router-dom";
 
 const navLinks = [
-  { label: "Dashboard", description: "Overview", to: "/" },
-  { label: "Employees", description: "Directory", to: "/employees" },
-  { label: "Payroll", description: "Compensation", to: "/payroll" },
-  { label: "Total Salaries", description: "Breakdown", to: "/total-salaries" },
-  {
-    label: "Other Expenses",
-    description: "Monthly spend",
-    to: "/other-expenses",
-  },
+  { label: "Dashboard", to: "/" },
+  { label: "Employees", to: "/employees" },
+  { label: "Payroll", to: "/payroll" },
+  { label: "Total Salaries", to: "/total-salaries" },
+  { label: "Financial Analytics", to: "/financial-analytics" },
+  { label: "Other Expenses", to: "/other-expenses" },
 ];
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 bg-white/80 backdrop-blur lg:border-b lg:border-slate-200/60">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:gap-6 sm:px-6 sm:py-4 lg:gap-8">
+    <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
+      <nav className="mx-auto flex w-full max-w-screen-2xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
         <NavLink
           to="/"
-          className="flex shrink-0 items-center gap-3 rounded-full border border-slate-200/80 bg-white/60 px-3 py-1.5 shadow-sm shadow-slate-200/60 transition hover:border-sky-200 hover:shadow-sky-100 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500"
+          className="flex shrink-0 items-center gap-3 rounded-full px-2 py-1 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500"
         >
-          <div className="relative flex h-9 w-9 items-center justify-center rounded-full bg-linear-to-br from-sky-500 via-blue-500 to-indigo-600 text-white shadow-lg shadow-sky-200/70 sm:h-10 sm:w-10">
-            <span className="text-base font-semibold sm:text-lg">PH</span>
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-500 text-sm font-semibold uppercase text-white sm:h-10 sm:w-10 sm:text-base">
+            PH
           </div>
           <div className="flex flex-col">
             <span className="text-sm font-semibold text-slate-900 sm:text-base">
               Pravara Health Care
             </span>
-            <span className="text-[0.55rem] font-medium uppercase tracking-[0.3em] text-slate-400 sm:text-xs">
+            <span className="text-[0.6rem] font-medium uppercase tracking-[0.25em] text-slate-400 sm:text-xs">
               Employee CRM
             </span>
           </div>
@@ -40,7 +37,7 @@ export default function Navbar() {
           type="button"
           aria-expanded={isOpen}
           aria-controls="primary-navigation"
-          className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-600 shadow-sm transition hover:border-sky-400 hover:text-sky-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500 lg:hidden"
+          className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-600 shadow-sm transition hover:border-emerald-300 hover:text-emerald-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 lg:hidden"
           onClick={() => setIsOpen((open) => !open)}
         >
           <span className="sr-only">Toggle navigation</span>
@@ -68,30 +65,25 @@ export default function Navbar() {
           id="primary-navigation"
           className={`${
             isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
-          } absolute inset-x-4 top-[calc(100%+0.75rem)] grid overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl shadow-slate-200/70 transition-[grid-template-rows] duration-200 lg:static lg:inset-auto lg:grid-rows-[1fr] lg:flex lg:flex-1 lg:justify-center lg:rounded-none lg:border-0 lg:bg-transparent lg:px-4 lg:shadow-none`}
+          } absolute inset-x-4 top-[calc(100%+0.75rem)] grid overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg transition-[grid-template-rows] duration-200 lg:static lg:inset-auto lg:grid-rows-[1fr] lg:flex lg:flex-1 lg:justify-center lg:rounded-none lg:border-0 lg:bg-transparent lg:px-4 lg:shadow-none`}
         >
           <div className="overflow-hidden lg:flex lg:w-full lg:justify-center lg:overflow-visible">
-            <ul className="flex flex-col gap-2 px-4 py-4 lg:flex-row lg:flex-wrap lg:items-center lg:justify-center lg:gap-4 lg:px-0 lg:py-0">
+            <ul className="flex flex-col gap-1 px-4 py-4 text-sm text-slate-600 lg:flex-row lg:items-center lg:justify-center lg:gap-3 lg:px-0 lg:py-0">
               {navLinks.map((link) => (
                 <li key={link.label} className="lg:flex">
                   <NavLink
                     to={link.to}
                     className={({ isActive }) =>
                       [
-                        "flex items-center gap-2 rounded-xl px-3 py-2 text-xs transition sm:text-sm",
-                        "hover:bg-slate-100/80 hover:text-slate-900 lg:hover:bg-slate-100/70 lg:hover:text-sky-600",
+                        "flex items-center gap-2 rounded-full px-3 py-2 transition",
+                        "hover:bg-slate-100 hover:text-slate-900",
                         isActive
-                          ? "bg-sky-50 text-sky-600 ring-1 ring-inset ring-sky-200"
+                          ? "bg-emerald-50 text-emerald-600 shadow-inner"
                           : "text-slate-600",
                       ].join(" ")
                     }
                   >
-                    <span className="text-xs font-semibold sm:text-sm">
-                      {link.label}
-                    </span>
-                    <span className="hidden text-[0.6rem] font-medium text-slate-400 lg:inline sm:text-xs">
-                      {link.description}
-                    </span>
+                    <span className="text-sm font-semibold">{link.label}</span>
                   </NavLink>
                 </li>
               ))}
