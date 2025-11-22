@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   Area,
   AreaChart,
@@ -16,67 +17,85 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { financialAPI } from "../utils/api.js";
 
-const monthlySummary = [
-  { month: "Jan", income: 38.5, expense: 32.1 },
-  { month: "Feb", income: 40.2, expense: 33.6 },
-  { month: "Mar", income: 42.8, expense: 34.9 },
-  { month: "Apr", income: 44.4, expense: 36.8 },
-  { month: "May", income: 39.8, expense: 37.2 },
-  { month: "Jun", income: 45.6, expense: 38.8 },
-  { month: "Jul", income: 47.1, expense: 39.4 },
-  { month: "Aug", income: 49.3, expense: 40.2 },
-  { month: "Sep", income: 48.7, expense: 41.1 },
-  { month: "Oct", income: 51.2, expense: 42.3 },
-  { month: "Nov", income: 52.4, expense: 43.5 },
-  { month: "Dec", income: 54.1, expense: 44.9 },
-];
-
-const incomeBreakdown = [
-  { label: "Salary", value: 142000 },
-  { label: "Business", value: 168000 },
-  { label: "Investment", value: 74500 },
-];
-
-const expenseBreakdown = [
-  { name: "Housing", value: 40, color: "#A020F0" },
-  { name: "Transportation", value: 25, color: "#D400FF" },
-  { name: "Entertainment", value: 20, color: "#FF00CC" },
-  { name: "Food", value: 10, color: "#A020F0" },
-  { name: "Other", value: 5, color: "#D400FF" },
-];
-
-const forecastData = [
-  { month: "Jan", income: 36, expense: 31 },
-  { month: "Feb", income: 38, expense: 32 },
-  { month: "Mar", income: 41, expense: 34 },
-  { month: "Apr", income: 44, expense: 35 },
-  { month: "May", income: 39, expense: 37 },
-  { month: "Jun", income: 46, expense: 38 },
-  { month: "Jul", income: 48, expense: 39 },
-  { month: "Aug", income: 50, expense: 41 },
-];
-
-const metricCards = [
-  { title: "Total Income", value: 384567.45, change: "+8.7%", tone: "text-[#A020F0]", chip: "bg-[#A020F0]/20" },
-  { title: "Total Expenses", value: 328942.6, change: "-6.3%", tone: "text-[#FF00CC]", chip: "bg-[#FF00CC]/20" },
-  { title: "Total Net Income", value: 55624.85, change: "+21.4%", tone: "text-[#A020F0]", chip: "bg-[#A020F0]/20" },
-];
-
-const incomeTotal = incomeBreakdown.reduce((sum, item) => sum + item.value, 0);
-const expenseTotalTransactions = 130;
 const formatCurrency = (amount) =>
   `₹${amount.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
 export default function FinancialAnalytics() {
+  const [monthlySummary, setMonthlySummary] = useState([]);
+  const [incomeBreakdown, setIncomeBreakdown] = useState([]);
+  const [expenseBreakdown, setExpenseBreakdown] = useState([]);
+  const [metricCards, setMetricCards] = useState([]);
+  const [forecastData, setForecastData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function fetchFinancialData() {
+      try {
+        setLoading(true);
+        const data = await financialAPI.getAnalytics(2024);
+        
+        setMonthlySummary(data.monthlySummary || []);
+        setIncomeBreakdown(data.incomeBreakdown || []);
+        setExpenseBreakdown(data.expenseBreakdown || []);
+        
+        // Set metric cards
+        setMetricCards([
+          { title: "Total Income", value: data.totalIncome || 0, change: "+8.7%", tone: "text-[#0BB47C]", chip: "bg-[#0BB47C]/20" },
+          { title: "Total Expenses", value: data.totalExpense || 0, change: "-6.3%", tone: "text-[#F4C542]", chip: "bg-[#F4C542]/20" },
+          { title: "Total Net Income", value: data.netIncome || 0, change: "+21.4%", tone: "text-[#0BB47C]", chip: "bg-[#0BB47C]/20" },
+        ]);
+        
+        // Use monthly summary for forecast (last 8 months)
+        setForecastData((data.monthlySummary || []).slice(0, 8));
+      } catch (err) {
+        console.error("Error fetching financial data:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchFinancialData();
+  }, []);
+
+  if (loading) {
+    return (
+      <section className="rounded-3xl card-neon text-[#4A4A4A] shadow-2xl p-8">
+        <div className="flex items-center justify-center">
+          <div className="text-center">
+            <div className="mb-4 text-xl font-semibold">Loading financial data...</div>
+            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#0BB47C] border-r-transparent"></div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="rounded-3xl card-neon text-[#4A4A4A] shadow-2xl p-8">
+        <div className="flex items-center justify-center">
+          <div className="text-center">
+            <div className="mb-4 text-xl font-semibold text-[#D9534F]">Error loading data</div>
+            <div className="text-sm text-[#4A4A4A]">{error}</div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  const incomeTotal = incomeBreakdown.reduce((sum, item) => sum + item.value, 0);
+  const expenseTotalTransactions = expenseBreakdown.reduce((sum, item) => sum + item.value, 0);
   return (
     <section className="rounded-3xl card-neon text-white shadow-2xl">
-      <header className="flex flex-col gap-2 border-b border-[#A020F0]/20 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+      <header className="flex flex-col gap-2 border-b border-[#D9D9D9] px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-[#A0A0A0]">Analytics · Summary</p>
-          <h2 className="mt-1 text-xl font-semibold text-white sm:text-2xl">Financial analytics</h2>
+          <p className="text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-[#4A4A4A]">Analytics · Summary</p>
+          <h2 className="mt-1 text-xl font-semibold text-[#4A4A4A] sm:text-2xl">Financial analytics</h2>
         </div>
-        <div className="flex flex-wrap gap-2 text-[0.65rem] font-medium text-white">
+        <div className="flex flex-wrap gap-2 text-[0.65rem] font-medium text-[#4A4A4A]">
           <span className="rounded-full glass px-2.5 py-1">All accounts</span>
           <span className="rounded-full glass px-2.5 py-1">Monthly</span>
           <span className="rounded-full glass px-2.5 py-1">2024</span>
@@ -87,8 +106,8 @@ export default function FinancialAnalytics() {
         <article className="rounded-2xl glass-card p-4">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex flex-col">
-              <h3 className="text-xs font-semibold uppercase tracking-[0.28em] text-[#A0A0A0]">Monthly Income & Expenses</h3>
-              <p className="text-[0.65rem] text-[#A0A0A0]">Income vs expenses · Jan - Dec</p>
+              <h3 className="text-xs font-semibold uppercase tracking-[0.28em] text-[#4A4A4A]">Monthly Income & Expenses</h3>
+              <p className="text-[0.65rem] text-[#4A4A4A]">Income vs expenses · Jan - Dec</p>
             </div>
           </div>
           <div className="mt-4 h-44">
@@ -99,16 +118,16 @@ export default function FinancialAnalytics() {
                 barCategoryGap="15%"
                 barGap={8}
               >
-                <CartesianGrid stroke="rgba(160, 32, 240, 0.2)" strokeDasharray="3 3" />
+                <CartesianGrid stroke="rgba(11, 180, 124, 0.2)" strokeDasharray="3 3" />
                 <XAxis 
                   dataKey="month" 
-                  stroke="#A0A0A0" 
-                  tick={{ fill: "#A0A0A0", fontSize: 10 }} 
+                  stroke="#4A4A4A" 
+                  tick={{ fill: "#4A4A4A", fontSize: 10 }} 
                   axisLine={false}
                 />
                 <YAxis 
-                  stroke="#A0A0A0" 
-                  tick={{ fill: "#A0A0A0", fontSize: 10 }} 
+                  stroke="#4A4A4A" 
+                  tick={{ fill: "#4A4A4A", fontSize: 10 }} 
                   tickFormatter={(value) => `₹${value}L`}
                   axisLine={false}
                 />
@@ -119,31 +138,31 @@ export default function FinancialAnalytics() {
                   }}
                   labelFormatter={(label) => `${label} 2024`}
                   contentStyle={{ 
-                    backgroundColor: "rgba(26, 26, 26, 0.95)", 
-                    borderColor: "rgba(160, 32, 240, 0.3)", 
+                    backgroundColor: "rgba(247, 248, 250, 0.95)", 
+                    borderColor: "rgba(11, 180, 124, 0.3)", 
                     borderRadius: "12px", 
-                    color: "#FFFFFF",
+                    color: "#4A4A4A",
                     padding: "8px 12px"
                   }}
                   itemStyle={{ padding: "4px 0" }}
                 />
                 <Legend 
                   iconType="circle" 
-                  wrapperStyle={{ color: "#FFFFFF", paddingTop: "5px", fontSize: "12px" }} 
+                  wrapperStyle={{ color: "#4A4A4A", paddingTop: "5px", fontSize: "12px" }} 
                 />
                 <Bar 
                   dataKey="income" 
                   name="Income" 
-                  fill="#A020F0" 
+                  fill="#0BB47C" 
                   radius={[4, 4, 0, 0]}
-                  style={{ filter: 'drop-shadow(0 0 4px rgba(160, 32, 240, 0.5))' }}
+                  style={{ filter: 'drop-shadow(0 0 4px rgba(11, 180, 124, 0.5))' }}
                 />
                 <Bar 
                   dataKey="expense" 
                   name="Expenses" 
-                  fill="#FF00CC" 
+                  fill="#F4C542" 
                   radius={[4, 4, 0, 0]}
-                  style={{ filter: 'drop-shadow(0 0 4px rgba(255, 0, 204, 0.5))' }}
+                  style={{ filter: 'drop-shadow(0 0 4px rgba(244, 197, 66, 0.5))' }}
                 />
               </BarChart>
             </ResponsiveContainer>
@@ -153,8 +172,8 @@ export default function FinancialAnalytics() {
         <aside className="grid gap-3">
           {metricCards.map((card) => (
             <div key={card.title} className="rounded-2xl glass-card p-4">
-              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.28em] text-[#A0A0A0]">{card.title}</p>
-              <p className="mt-2 text-xl font-semibold text-white">{formatCurrency(card.value)}</p>
+              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.28em] text-[#4A4A4A]">{card.title}</p>
+              <p className="mt-2 text-xl font-semibold text-[#4A4A4A]">{formatCurrency(card.value)}</p>
               <span className={`mt-1.5 inline-flex items-center gap-2 rounded-full glass px-2.5 py-1 text-[0.65rem] font-semibold ${card.tone}`}>
                 {card.change}
               </span>
@@ -163,22 +182,22 @@ export default function FinancialAnalytics() {
         </aside>
       </div>
 
-      <div className="grid gap-4 border-t border-[#A020F0]/20 px-4 py-4 lg:grid-cols-3">
+      <div className="grid gap-4 border-t border-[#D9D9D9] px-4 py-4 lg:grid-cols-3">
         <article className="rounded-2xl glass-card p-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-xs font-semibold uppercase tracking-[0.28em] text-[#A0A0A0]">Income Overview</h3>
-            <span className="rounded-full glass px-2.5 py-1 text-[0.6rem] uppercase tracking-[0.25em] text-[#A0A0A0]">
+            <h3 className="text-xs font-semibold uppercase tracking-[0.28em] text-[#4A4A4A]">Income Overview</h3>
+            <span className="rounded-full glass px-2.5 py-1 text-[0.6rem] uppercase tracking-[0.25em] text-[#4A4A4A]">
               Categories
             </span>
           </div>
-          <p className="mt-3 text-xl font-semibold text-white">{formatCurrency(incomeTotal)}</p>
+          <p className="mt-3 text-xl font-semibold text-[#4A4A4A]">{formatCurrency(incomeTotal)}</p>
           <div className="mt-3 space-y-2.5">
             {incomeBreakdown.map((item, index) => {
               const percentage = Math.round((item.value / incomeTotal) * 100);
-              const colors = ["#A020F0", "#D400FF", "#FF00CC"];
+              const colors = ["#0BB47C", "#067E59", "#4DA7FF"];
               return (
                 <div key={item.label} className="space-y-1.5">
-                  <div className="flex items-center justify-between text-xs text-white">
+                  <div className="flex items-center justify-between text-xs text-[#4A4A4A]">
                     <span className="font-medium">{item.label}</span>
                     <span className="font-semibold text-[0.65rem]">{formatCurrency(item.value)} ({percentage}%)</span>
                   </div>
@@ -200,8 +219,8 @@ export default function FinancialAnalytics() {
 
         <article className="rounded-2xl glass-card p-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-xs font-semibold uppercase tracking-[0.28em] text-[#A0A0A0]">Expense Analysis</h3>
-            <span className="rounded-full glass px-2.5 py-1 text-[0.6rem] uppercase tracking-[0.25em] text-[#A0A0A0]">
+            <h3 className="text-xs font-semibold uppercase tracking-[0.28em] text-[#4A4A4A]">Expense Analysis</h3>
+            <span className="rounded-full glass px-2.5 py-1 text-[0.6rem] uppercase tracking-[0.25em] text-[#4A4A4A]">
               Transactions
             </span>
           </div>
@@ -210,7 +229,7 @@ export default function FinancialAnalytics() {
               <PieChart>
                 <Tooltip
                   formatter={(value, name) => [`${value}%`, name]}
-                  contentStyle={{ backgroundColor: "rgba(26, 26, 26, 0.95)", borderColor: "rgba(160, 32, 240, 0.3)", borderRadius: "12px", color: "#FFFFFF" }}
+                  contentStyle={{ backgroundColor: "rgba(247, 248, 250, 0.95)", borderColor: "rgba(11, 180, 124, 0.3)", borderRadius: "12px", color: "#4A4A4A" }}
                 />
                 <Pie
                   data={expenseBreakdown}
@@ -226,13 +245,13 @@ export default function FinancialAnalytics() {
                     <Cell key={entry.name} fill={entry.color} />
                   ))}
                 </Pie>
-                <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" fill="#FFFFFF" fontSize="18" fontWeight="600">
+                <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" fill="#4A4A4A" fontSize="18" fontWeight="600">
                   {expenseTotalTransactions} Total
                 </text>
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <div className="mt-4 grid gap-1.5 text-[0.65rem] text-white">
+          <div className="mt-4 grid gap-1.5 text-[0.65rem] text-[#4A4A4A]">
             {expenseBreakdown.map((item) => (
               <div key={item.name} className="flex items-center justify-between">
                 <span className="inline-flex items-center gap-2">
@@ -247,8 +266,8 @@ export default function FinancialAnalytics() {
 
         <article className="rounded-2xl glass-card p-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-xs font-semibold uppercase tracking-[0.28em] text-[#A0A0A0]">Financial Forecast</h3>
-            <span className="rounded-full glass px-2.5 py-1 text-[0.6rem] uppercase tracking-[0.25em] text-[#A0A0A0]">
+            <h3 className="text-xs font-semibold uppercase tracking-[0.28em] text-[#4A4A4A]">Financial Forecast</h3>
+            <span className="rounded-full glass px-2.5 py-1 text-[0.6rem] uppercase tracking-[0.25em] text-[#4A4A4A]">
               May focus
             </span>
           </div>
@@ -257,50 +276,50 @@ export default function FinancialAnalytics() {
               <LineChart data={forecastData} margin={{ top: 5, right: 5, left: -10, bottom: 0 }}>
                 <defs>
                   <linearGradient id="forecastGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#A020F0" stopOpacity={0.3} />
-                    <stop offset="100%" stopColor="#FF00CC" stopOpacity={0.1} />
+                    <stop offset="0%" stopColor="#0BB47C" stopOpacity={0.3} />
+                    <stop offset="100%" stopColor="#4DA7FF" stopOpacity={0.1} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid stroke="rgba(160, 32, 240, 0.2)" strokeDasharray="3 3" />
+                <CartesianGrid stroke="rgba(11, 180, 124, 0.2)" strokeDasharray="3 3" />
                 <XAxis 
                   dataKey="month" 
-                  stroke="#A0A0A0" 
-                  tick={{ fill: "#A0A0A0", fontSize: 10 }} 
+                  stroke="#4A4A4A" 
+                  tick={{ fill: "#4A4A4A", fontSize: 10 }} 
                   axisLine={false}
                 />
                 <YAxis 
-                  stroke="#A0A0A0" 
-                  tick={{ fill: "#A0A0A0", fontSize: 10 }} 
+                  stroke="#4A4A4A" 
+                  tick={{ fill: "#4A4A4A", fontSize: 10 }} 
                   tickFormatter={(value) => `₹${value}L`}
                   axisLine={false}
                 />
                 <Tooltip
                   formatter={(value, name) => [`₹${Number(value).toFixed(1)}L`, name === "income" ? "Income" : "Expenses"]}
                   contentStyle={{ 
-                    backgroundColor: "rgba(26, 26, 26, 0.95)", 
-                    borderColor: "rgba(160, 32, 240, 0.3)", 
+                    backgroundColor: "rgba(247, 248, 250, 0.95)", 
+                    borderColor: "rgba(11, 180, 124, 0.3)", 
                     borderRadius: "12px", 
-                    color: "#FFFFFF",
+                    color: "#4A4A4A",
                     padding: "8px 12px"
                   }}
                   itemStyle={{ padding: "4px 0" }}
                 />
                 <Legend 
                   iconType="line" 
-                  wrapperStyle={{ color: "#FFFFFF", fontSize: "12px", paddingTop: "5px" }} 
+                  wrapperStyle={{ color: "#4A4A4A", fontSize: "12px", paddingTop: "5px" }} 
                 />
                 <ReferenceLine 
                   x="May" 
-                  stroke="#A0A0A0" 
+                  stroke="#4A4A4A" 
                   strokeWidth={1.5} 
                   strokeDasharray="3 3"
                   label={{ 
                     value: "May", 
                     position: "top", 
-                    fill: "#FFFFFF",
+                    fill: "#4A4A4A",
                     fontSize: 11,
                     fontWeight: 600,
-                    backgroundColor: "rgba(26, 26, 26, 0.8)",
+                    backgroundColor: "rgba(247, 248, 250, 0.8)",
                     padding: "4px 8px",
                     borderRadius: "6px"
                   }}
@@ -316,24 +335,24 @@ export default function FinancialAnalytics() {
                   type="monotone" 
                   dataKey="income" 
                   name="Income" 
-                  stroke="#A020F0" 
+                  stroke="#0BB47C" 
                   strokeWidth={3}
-                  dot={{ fill: "#A020F0", r: 4, strokeWidth: 2, stroke: "#000000" }}
-                  activeDot={{ r: 6, fill: "#A020F0" }}
+                  dot={{ fill: "#0BB47C", r: 4, strokeWidth: 2, stroke: "#FFFFFF" }}
+                  activeDot={{ r: 6, fill: "#0BB47C" }}
                 />
                 <Line 
                   type="monotone" 
                   dataKey="expense" 
                   name="Expenses" 
-                  stroke="#FF00CC" 
+                  stroke="#F4C542" 
                   strokeWidth={3}
-                  dot={{ fill: "#FF00CC", r: 4, strokeWidth: 2, stroke: "#000000" }}
-                  activeDot={{ r: 6, fill: "#FF00CC" }}
+                  dot={{ fill: "#F4C542", r: 4, strokeWidth: 2, stroke: "#FFFFFF" }}
+                  activeDot={{ r: 6, fill: "#F4C542" }}
                 />
               </LineChart>
             </ResponsiveContainer>
           </div>
-          <p className="mt-3 text-[0.65rem] text-[#A0A0A0] leading-relaxed">
+          <p className="mt-3 text-[0.65rem] text-[#4A4A4A] leading-relaxed">
             Expecting deficit in May. Consider saving more in April or optimizing leisure expenses.
           </p>
         </article>

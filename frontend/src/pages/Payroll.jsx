@@ -1,94 +1,84 @@
+import { useState, useEffect } from 'react'
 import Navbar from '../components/Navbar.jsx'
 import Footer from '../components/Footer.jsx'
 import { NavLink } from 'react-router-dom'
-
-const payrollData = [
-  {
-    id: 'EMP-001',
-    name: 'Dr. Kavita Kulkarni',
-    monthlySalary: '₹2,50,000',
-    annualPackage: '₹30,00,000',
-  },
-  {
-    id: 'EMP-002',
-    name: 'Rahul Deshmukh',
-    monthlySalary: '₹95,000',
-    annualPackage: '₹11,40,000',
-  },
-  {
-    id: 'EMP-003',
-    name: 'Nikita Jadhav',
-    monthlySalary: '₹80,000',
-    annualPackage: '₹9,60,000',
-  },
-  {
-    id: 'EMP-004',
-    name: 'Prakash Patil',
-    monthlySalary: '₹60,000',
-    annualPackage: '₹7,20,000',
-  },
-  {
-    id: 'EMP-005',
-    name: 'Sneha More',
-    monthlySalary: '₹70,000',
-    annualPackage: '₹8,40,000',
-  },
-  {
-    id: 'EMP-006',
-    name: 'Anil Gujar',
-    monthlySalary: '₹55,000',
-    annualPackage: '₹6,60,000',
-  },
-  {
-    id: 'EMP-007',
-    name: 'Dr. Manisha Pawar',
-    monthlySalary: '₹1,80,000',
-    annualPackage: '₹21,60,000',
-  },
-  {
-    id: 'EMP-008',
-    name: 'Sujata Kulkarni',
-    monthlySalary: '₹65,000',
-    annualPackage: '₹7,80,000',
-  },
-  {
-    id: 'EMP-009',
-    name: 'Vikram Shinde',
-    monthlySalary: '₹75,000',
-    annualPackage: '₹9,00,000',
-  },
-  {
-    id: 'EMP-010',
-    name: 'Meera Sathe',
-    monthlySalary: '₹68,000',
-    annualPackage: '₹8,16,000',
-  },
-]
+import { payrollAPI } from '../utils/api.js'
 
 const parseAmount = (value) => Number(value.replace(/[^0-9.]/g, ''))
 const formatCurrency = (value) =>
   new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(value)
 
-const totalMonthly = payrollData.reduce((sum, employee) => sum + parseAmount(employee.monthlySalary), 0)
-const totalAnnual = payrollData.reduce((sum, employee) => sum + parseAmount(employee.annualPackage), 0)
-const averageMonthly = Math.round(totalMonthly / payrollData.length)
-const highestMonthly = payrollData.reduce(
-  (max, employee) => Math.max(max, parseAmount(employee.monthlySalary)),
-  0,
-)
-
 export default function Payroll() {
+  const [payrollData, setPayrollData] = useState([])
+  const [summary, setSummary] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    async function fetchPayrollData() {
+      try {
+        setLoading(true)
+        const [payrolls, summaryData] = await Promise.all([
+          payrollAPI.getAll(),
+          payrollAPI.getSummary()
+        ])
+        setPayrollData(payrolls || [])
+        setSummary(summaryData || {})
+      } catch (err) {
+        console.error('Error fetching payroll data:', err)
+        setError(err.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchPayrollData()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen flex-col bg-white">
+        <Navbar />
+        <main className="mx-auto flex w-full max-w-7xl grow items-center justify-center px-4 py-8">
+          <div className="text-center text-[#4A4A4A]">
+            <div className="mb-4 text-2xl font-semibold">Loading payroll data...</div>
+            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#0BB47C] border-r-transparent"></div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex min-h-screen flex-col bg-white">
+        <Navbar />
+        <main className="mx-auto flex w-full max-w-7xl grow items-center justify-center px-4 py-8">
+          <div className="text-center text-[#4A4A4A]">
+            <div className="mb-4 text-xl font-semibold text-[#D9534F]">Error loading data</div>
+            <div className="text-sm text-[#4A4A4A]">{error}</div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    )
+  }
+
+  const totalMonthly = summary?.totalMonthly || 0
+  const totalAnnual = summary?.totalAnnual || 0
+  const averageMonthly = summary?.averageMonthly || 0
+  const highestMonthly = summary?.highestMonthly || 0
   return (
-    <div className="flex min-h-screen flex-col bg-[#000000]">
+    <div className="flex min-h-screen flex-col bg-white">
       <Navbar />
 
       <main className="mx-auto flex w-full max-w-7xl grow flex-col gap-8 px-4 py-8 sm:gap-10 sm:px-6 sm:py-10">
-        <section className="relative overflow-hidden rounded-3xl bg-neon-gradient px-5 py-8 text-white shadow-2xl neon-glow-gradient sm:px-8 sm:py-10">
+        <section className="relative overflow-hidden rounded-3xl bg-[#3E96F4] px-5 py-8 text-white shadow-2xl sm:px-8 sm:py-10">
           <div className="absolute -left-16 top-6 h-32 w-32 rounded-full bg-[#A020F0]/40 blur-3xl sm:h-40 sm:w-40" />
           <div className="absolute right-0 bottom-0 h-40 w-40 translate-x-1/4 rounded-full bg-[#FF00CC]/20 blur-3xl sm:h-48 sm:w-48" />
           <div className="relative grid gap-6 lg:grid-cols-[1.2fr_1fr] lg:items-center">
             <div>
-              <span className="inline-flex items-center gap-2 rounded-full glass px-3 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-white sm:text-xs">
+              <span className="inline-flex items-center gap-2 rounded-full glass px-3 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-black sm:text-xs">
                 Payroll overview
               </span>
               <h1 className="mt-4 text-2xl font-semibold sm:text-3xl lg:text-4xl">
@@ -100,7 +90,7 @@ export default function Payroll() {
               <div className="mt-5 flex flex-wrap gap-2.5 sm:mt-6 sm:gap-3">
                 <NavLink
                   to="/total-salaries"
-                  className="btn-neon-primary inline-flex items-center gap-2 text-xs sm:px-4 sm:text-sm"
+                  className="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-xs font-semibold text-[#3E96F4] transition hover:bg-white/90 sm:px-4 sm:text-sm"
                 >
                   View total salaries
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-4 w-4">
@@ -109,7 +99,7 @@ export default function Payroll() {
                 </NavLink>
                 <NavLink
                   to="/employees"
-                  className="btn-neon-outline inline-flex items-center gap-2 text-xs sm:px-4 sm:text-sm"
+                  className="inline-flex items-center gap-2 rounded-lg border-2 border-white px-4 py-2 text-xs font-semibold text-white transition hover:bg-white/10 sm:px-4 sm:text-sm"
                 >
                   Employee directory
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-4 w-4">
@@ -119,11 +109,11 @@ export default function Payroll() {
               </div>
             </div>
             <div className="grid gap-3 rounded-2xl glass-card p-4 sm:gap-4 sm:p-5">
-              {[{ label: 'Monthly payroll', value: formatCurrency(totalMonthly), detail: '+4.2% vs last cycle' }, { label: 'Annualised payroll', value: formatCurrency(totalAnnual), detail: 'Including bonuses & perks' }, { label: 'Highest monthly pay', value: formatCurrency(highestMonthly), detail: '₹1.8L at Oncology' }].map((stat) => (
+              {[{ label: 'Monthly payroll', value: formatCurrency(totalMonthly), detail: '+4.2% vs last cycle' }, { label: 'Annualised payroll', value: formatCurrency(totalAnnual), detail: 'Including bonuses & perks' }, { label: 'Highest monthly pay', value: formatCurrency(highestMonthly), detail: `${summary?.employeeCount || 0} employees` }].map((stat) => (
                 <div key={stat.label} className="rounded-xl glass p-3 sm:p-4">
-                  <p className="text-[0.6rem] font-medium uppercase tracking-[0.3em] text-white/80 sm:text-xs">{stat.label}</p>
-                  <p className="mt-2 text-xl font-semibold text-white sm:text-2xl">{stat.value}</p>
-                  <p className="mt-1 text-[0.65rem] font-medium text-white/70 sm:text-xs">{stat.detail}</p>
+                  <p className="text-[0.6rem] font-medium uppercase tracking-[0.3em] text-black/80 sm:text-xs">{stat.label}</p>
+                  <p className="mt-2 text-xl font-semibold text-black sm:text-2xl">{stat.value}</p>
+                  <p className="mt-1 text-[0.65rem] font-medium text-black/70 sm:text-xs">{stat.detail}</p>
                 </div>
               ))}
             </div>
@@ -131,9 +121,9 @@ export default function Payroll() {
         </section>
 
         <section className="grid gap-3 sm:grid-cols-4 sm:gap-4">
-          {[{ label: 'Average monthly pay', value: formatCurrency(averageMonthly), tone: 'bg-[#A020F0]/20 text-[#A020F0]' }, { label: 'Median salary band', value: '₹72K', tone: 'bg-[#D400FF]/20 text-[#D400FF]' }, { label: 'Variable payout fund', value: '₹2.4L', tone: 'bg-[#FF00CC]/20 text-[#FF00CC]' }, { label: 'Payroll completion', value: '92%', tone: 'bg-[#A020F0]/20 text-[#A020F0]' }].map((item) => (
+          {[{ label: 'Average monthly pay', value: formatCurrency(averageMonthly), tone: 'bg-[#A020F0]/20 text-[#A020F0]' }, { label: 'Median salary band', value: '₹72K', tone: 'bg-[#D400FF]/20 text-[#D400FF]' }, { label: 'Variable payout fund', value: '₹2.4L', tone: 'bg-[#FF00CC]/20 text-[#FF00CC]' }, { label: 'Employees', value: `${summary?.employeeCount || 0}`, tone: 'bg-[#A020F0]/20 text-[#A020F0]' }].map((item) => (
             <div key={item.label} className="card-neon p-4 sm:p-5">
-              <p className="text-[0.65rem] font-medium uppercase tracking-[0.25em] text-[#A0A0A0] sm:text-xs">{item.label}</p>
+              <p className="text-[0.65rem] font-medium uppercase tracking-[0.25em] text-[#4A4A4A] sm:text-xs">{item.label}</p>
               <p className={`mt-3 inline-flex items-center rounded-full glass px-3 py-1 text-xs font-semibold ${item.tone} sm:text-sm`}>{item.value}</p>
             </div>
           ))}
@@ -141,8 +131,8 @@ export default function Payroll() {
 
         <section className="overflow-hidden rounded-3xl card-neon">
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-white/10 text-left">
-              <thead className="glass text-[0.65rem] font-semibold uppercase tracking-[0.25em] text-[#A0A0A0] sm:text-xs">
+            <table className="min-w-full divide-y divide-[#D9D9D9] text-left">
+              <thead className="glass text-[0.65rem] font-semibold uppercase tracking-[0.25em] text-[#4A4A4A] sm:text-xs">
                 <tr>
                   <th scope="col" className="px-4 py-3 sm:px-6 sm:py-4">Employee</th>
                   <th scope="col" className="px-4 py-3 sm:px-6 sm:py-4">Employee ID</th>
@@ -150,12 +140,12 @@ export default function Payroll() {
                   <th scope="col" className="px-4 py-3 sm:px-6 sm:py-4">Annual Package</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/10 text-xs text-white sm:text-sm">
+              <tbody className="divide-y divide-[#D9D9D9] text-xs text-[#4A4A4A] sm:text-sm">
                 {payrollData.map((employee) => (
-                  <tr key={employee.id} className="transition hover:bg-neon-gradient-blur">
+                  <tr key={employee.id} className="transition hover:bg-[#F7F8FA]">
                     <td className="px-4 py-3 sm:px-6 sm:py-4">
                       <div className="flex items-center gap-3">
-                        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-neon-gradient text-xs font-semibold text-white neon-glow-purple sm:h-10 sm:w-10 sm:text-sm">
+                        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#0BB47C] text-xs font-semibold text-white sm:h-10 sm:w-10 sm:text-sm">
                           {employee.name
                             .split(' ')
                             .slice(0, 2)
@@ -163,14 +153,14 @@ export default function Payroll() {
                             .join('')}
                         </span>
                         <div>
-                          <p className="text-sm font-semibold text-white sm:text-base">{employee.name}</p>
-                          <p className="text-[0.6rem] font-medium uppercase tracking-[0.25em] text-[#A0A0A0] sm:text-xs">Payroll cycle</p>
+                          <p className="text-sm font-semibold text-[#4A4A4A] sm:text-base">{employee.name}</p>
+                          <p className="text-[0.6rem] font-medium uppercase tracking-[0.25em] text-[#4A4A4A] sm:text-xs">Payroll cycle</p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-white/80 sm:px-6 sm:py-4">{employee.id}</td>
-                    <td className="px-4 py-3 text-white sm:px-6 sm:py-4">{employee.monthlySalary}</td>
-                    <td className="px-4 py-3 text-white sm:px-6 sm:py-4">{employee.annualPackage}</td>
+                    <td className="px-4 py-3 text-[#4A4A4A] sm:px-6 sm:py-4">{employee.id}</td>
+                    <td className="px-4 py-3 text-[#4A4A4A] sm:px-6 sm:py-4">{employee.monthlySalary}</td>
+                    <td className="px-4 py-3 text-[#4A4A4A] sm:px-6 sm:py-4">{employee.annualPackage}</td>
                   </tr>
                 ))}
               </tbody>

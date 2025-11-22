@@ -1,90 +1,37 @@
+import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar.jsx";
 import Footer from "../components/Footer.jsx";
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { dashboardAPI } from "../utils/api.js";
 
-const topLineData = [
-  { month: "Jan", totalSales: 320 },
-  { month: "Feb", totalSales: 360 },
-  { month: "Mar", totalSales: 410 },
-  { month: "Apr", totalSales: 455 },
-  { month: "May", totalSales: 520 },
-  { month: "Jun", totalSales: 565 },
+const retentionColors = ["bg-[#0BB47C]", "bg-[#067E59]", "bg-[#4DA7FF]", "bg-[#0BB47C]", "bg-[#067E59]", "bg-[#4DA7FF]"];
+
+const retentionLegend = [
+  { label: "95%+", tone: "bg-[#067E59]" },
+  { label: "90-95%", tone: "bg-[#0BB47C]" },
+  { label: "85-90%", tone: "bg-[#4DA7FF]" },
+  { label: "75-85%", tone: "bg-[#60A5FA]" },
+  { label: "65-75%", tone: "bg-[#FF8C42]" },
+  { label: "<65%", tone: "bg-[#F4C542]" },
 ];
 
-const summaryStats = [
-  { label: "Revenue", value: "₹320.4K", trend: "+8.2%", trendTone: "text-[#A020F0]", progress: 78, progressTone: "bg-[#A020F0]" },
-  { label: "Orders", value: "31.6K", trend: "+3.4%", trendTone: "text-[#D400FF]", progress: 64, progressTone: "bg-[#D400FF]" },
-  { label: "Avg. Order Value", value: "₹4.2K", trend: "+₹0.12K", trendTone: "text-[#FF00CC]", progress: 55, progressTone: "bg-[#FF00CC]" },
-  { label: "New Cust. Per Mo", value: "12.6K", trend: "+1.9K", trendTone: "text-[#A020F0]", progress: 82, progressTone: "bg-[#A020F0]" },
-];
-
-const funnelStages = [
-  {
-    step: "Visitors",
-    value: "256.2K",
-    conversion: "50.4% to Activity",
-    color: "from-lime-300 via-lime-400 to-emerald-500",
-  },
-  {
-    step: "Product Views",
-    value: "198.4K",
-    conversion: "To cart initiation 32.1%",
-    color: "from-emerald-400 via-emerald-500 to-teal-500",
-  },
-  {
-    step: "Add to Cart",
-    value: "139.2K",
-    conversion: "Cart conversion 24.2%",
-    color: "from-teal-500 via-cyan-500 to-sky-500",
-  },
-  {
-    step: "Check Out",
-    value: "9.4K",
-    conversion: "Checkout abandonment 6.4%",
-    color: "from-sky-500 via-blue-500 to-indigo-500",
-  },
-  {
-    step: "Complete Order",
-    value: "5.9K",
-    conversion: "Final conversion 3.8%",
-    color: "from-indigo-500 via-indigo-600 to-slate-700",
-  },
-];
-
-const lifetimeRevenueData = [
-  { month: "Jan", newCustomers: 120, returningCustomers: 80 },
-  { month: "Feb", newCustomers: 180, returningCustomers: 120 },
-  { month: "Mar", newCustomers: 260, returningCustomers: 190 },
-  { month: "Apr", newCustomers: 310, returningCustomers: 240 },
-  { month: "May", newCustomers: 370, returningCustomers: 280 },
-  { month: "Jun", newCustomers: 420, returningCustomers: 320 },
-];
-
-const retentionMatrix = [
-  { month: "Jan", cohorts: ["100%", "88.7%", "82.1%", "74.5%", "68.0%", "61.4%"] },
-  { month: "Feb", cohorts: ["100%", "90.1%", "84.3%", "77.2%", "69.6%", "63.0%"] },
-  { month: "Mar", cohorts: ["100%", "91.2%", "85.7%", "79.9%", "73.1%", "67.8%"] },
-  { month: "Apr", cohorts: ["100%", "92.3%", "86.9%", "80.5%", "74.2%", "68.6%"] },
-  { month: "May", cohorts: ["100%", "89.9%", "83.6%", "77.4%", "70.8%", "65.5%"] },
-  { month: "Jun", cohorts: ["100%", "87.6%", "81.4%", "74.9%", "68.2%", "62.7%"] },
-];
-
-const retentionColors = ["bg-[#A020F0]", "bg-[#D400FF]", "bg-[#FF00CC]", "bg-[#A020F0]", "bg-[#D400FF]", "bg-[#FF00CC]"];
-
-const areaData = [
-  { name: "Step 1", value: 100 },
-  { name: "Step 2", value: 78 },
-  { name: "Step 3", value: 52 },
-  { name: "Step 4", value: 28 },
-  { name: "Step 5", value: 16 },
-];
+// Function to get color based on retention percentage
+const getRetentionColor = (percentage) => {
+  const num = parseFloat(percentage);
+  if (num >= 95) return "bg-[#067E59]"; // Dark Green
+  if (num >= 90) return "bg-[#0BB47C]"; // Medium Green
+  if (num >= 85) return "bg-[#4DA7FF]"; // Light Blue
+  if (num >= 75) return "bg-[#60A5FA]"; // Medium Blue
+  if (num >= 65) return "bg-[#FF8C42]"; // Orange
+  return "bg-[#F4C542]"; // Yellow
+};
 
 const kpiCards = [
   {
     title: "Conversion Rate",
     value: "3.8%",
     helper: "+0.6pp vs last month",
-    gradient: "from-[#A020F0] via-[#D400FF] to-[#FF00CC]",
+    gradient: "from-[#3B82F6] via-[#2563EB] to-[#1D4ED8]",
     badge: "Healthy",
     badgeTone: "bg-white/20 text-white",
     icon: (
@@ -97,7 +44,7 @@ const kpiCards = [
     title: "Returning Customers",
     value: "58%",
     helper: "+4% QoQ",
-    gradient: "from-[#D400FF] via-[#A020F0] to-[#FF00CC]",
+    gradient: "from-[#FF6B6B] via-[#FF7F7F] to-[#FF8E8E]",
     badge: "Growing",
     badgeTone: "bg-white/20 text-white",
     icon: (
@@ -110,7 +57,7 @@ const kpiCards = [
     title: "Average Basket",
     value: "₹148.90",
     helper: "+₹12 vs goal",
-    gradient: "from-[#FF00CC] via-[#D400FF] to-[#A020F0]",
+    gradient: "from-[#FF8C42] via-[#FF7A33] to-[#FF6B24]",
     badge: "Above target",
     badgeTone: "bg-white/20 text-white",
     icon: (
@@ -127,41 +74,137 @@ const actionItems = [
     title: "Launch A/B test on checkout copy",
     owner: "Growth Team",
     due: "Due tomorrow",
-    tone: "border-[#A020F0] bg-neon-gradient-blur text-white",
+    tone: "border-[#0BB47C] bg-neon-gradient-blur text-white",
   },
   {
     title: "Review VIP loyalty tier pricing",
     owner: "Finance & CRM",
     due: "Due Friday",
-    tone: "border-[#D400FF] bg-neon-gradient-blur text-white",
+    tone: "border-[#067E59] bg-neon-gradient-blur text-white",
   },
   {
     title: "Enable referral bonus tracking",
     owner: "Product Ops",
     due: "In progress",
-    tone: "border-[#FF00CC] bg-neon-gradient-blur text-white",
+    tone: "border-[#4DA7FF] bg-neon-gradient-blur text-white",
   },
 ];
 
-const retentionLegend = [
-  { label: "95%+", tone: "bg-emerald-600" },
-  { label: "90-95%", tone: "bg-emerald-500" },
-  { label: "85-90%", tone: "bg-emerald-400" },
-  { label: "75-85%", tone: "bg-lime-400" },
-  { label: "65-75%", tone: "bg-lime-300" },
-  { label: "<65%", tone: "bg-yellow-300" },
-];
-
 export default function Dashboard() {
+  const [topLineData, setTopLineData] = useState([]);
+  const [summaryStats, setSummaryStats] = useState([]);
+  const [lifetimeRevenueData, setLifetimeRevenueData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function fetchDashboardData() {
+      try {
+        setLoading(true);
+        const data = await dashboardAPI.getOverview();
+        setTopLineData(data.topLineData || []);
+        setSummaryStats(data.summaryStats || []);
+        setLifetimeRevenueData(data.lifetimeRevenueData || []);
+      } catch (err) {
+        console.error('Error fetching dashboard data:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchDashboardData();
+  }, []);
+
+  // Default funnel data (can be moved to backend later)
+  const funnelStages = [
+    {
+      step: "Visitors",
+      value: "256.2K",
+      conversion: "50.4% to Activity",
+      color: "from-lime-300 via-lime-400 to-emerald-500",
+    },
+    {
+      step: "Product Views",
+      value: "198.4K",
+      conversion: "To cart initiation 32.1%",
+      color: "from-emerald-400 via-emerald-500 to-teal-500",
+    },
+    {
+      step: "Add to Cart",
+      value: "139.2K",
+      conversion: "Cart conversion 24.2%",
+      color: "from-teal-500 via-cyan-500 to-sky-500",
+    },
+    {
+      step: "Check Out",
+      value: "9.4K",
+      conversion: "Checkout abandonment 6.4%",
+      color: "from-sky-500 via-blue-500 to-indigo-500",
+    },
+    {
+      step: "Complete Order",
+      value: "5.9K",
+      conversion: "Final conversion 3.8%",
+      color: "from-indigo-500 via-indigo-600 to-slate-700",
+    },
+  ];
+
+  const areaData = [
+    { name: "Step 1", value: 100 },
+    { name: "Step 2", value: 78 },
+    { name: "Step 3", value: 52 },
+    { name: "Step 4", value: 28 },
+    { name: "Step 5", value: 16 },
+  ];
+
+  // Default retention matrix (can be moved to backend later)
+  const retentionMatrix = [
+    { month: "Jan", cohorts: ["100%", "88.7%", "82.1%", "74.5%", "68.0%", "61.4%"] },
+    { month: "Feb", cohorts: ["100%", "90.1%", "84.3%", "77.2%", "69.6%", "63.0%"] },
+    { month: "Mar", cohorts: ["100%", "91.2%", "85.7%", "79.9%", "73.1%", "67.8%"] },
+    { month: "Apr", cohorts: ["100%", "92.3%", "86.9%", "80.5%", "74.2%", "68.6%"] },
+    { month: "May", cohorts: ["100%", "89.9%", "83.6%", "77.4%", "70.8%", "65.5%"] },
+    { month: "Jun", cohorts: ["100%", "87.6%", "81.4%", "74.9%", "68.2%", "62.7%"] },
+  ];
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen flex-col bg-[#F7F8FA] text-[#4A4A4A]">
+        <Navbar />
+        <main className="flex grow items-center justify-center">
+          <div className="text-center">
+            <div className="mb-4 text-2xl font-semibold">Loading dashboard...</div>
+            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#0BB47C] border-r-transparent"></div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex min-h-screen flex-col bg-[#F7F8FA] text-[#4A4A4A]">
+        <Navbar />
+        <main className="flex grow items-center justify-center">
+          <div className="text-center">
+            <div className="mb-4 text-xl font-semibold text-[#D9534F]">Error loading data</div>
+            <div className="text-sm text-[#4A4A4A]">{error}</div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
   return (
-    <div className="flex min-h-screen flex-col bg-[#000000] text-white">
+    <div className="flex min-h-screen flex-col bg-white text-[#4A4A4A]">
       <Navbar />
       <main className="flex grow">
         <div className="flex w-full flex-col gap-8 px-4 py-8 sm:px-8 lg:px-12 xl:px-16">
           <header className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
-              <h1 className="text-2xl font-semibold text-white">Overview Dashboard</h1>
-              <p className="text-sm text-[#A0A0A0]">Sales overview · Jan 1, 2023 – Jun 30, 2023</p>
+              <h1 className="text-2xl font-semibold text-[#4A4A4A]">Overview Dashboard</h1>
+              <p className="text-sm text-[#4A4A4A]">Sales overview · Jan 1, 2023 – Jun 30, 2023</p>
             </div>
             <div className="flex items-center gap-3">
               <button className="btn-neon-outline text-sm px-4 py-2">
@@ -203,11 +246,11 @@ export default function Dashboard() {
             <article className="card-neon">
               <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                  <p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#A0A0A0]">Total Sales</p>
-                  <h2 className="mt-2 text-3xl font-semibold text-white">₹895.39K</h2>
-                  <p className="text-xs text-[#A0A0A0]">last 30 days · +12.5% vs previous period</p>
+                  <p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#4A4A4A]">Total Sales</p>
+                  <h2 className="mt-2 text-3xl font-semibold text-[#4A4A4A]">₹895.39K</h2>
+                  <p className="text-xs text-[#4A4A4A]">last 30 days · +12.5% vs previous period</p>
                 </div>
-                <div className="mt-3 rounded-full bg-neon-gradient-blur px-3 py-1 text-xs font-semibold text-white neon-glow-purple">
+                <div className="mt-3 rounded-full bg-[#0BB47C] px-3 py-1 text-xs font-semibold text-white">
                   Jan 1, 2023 – Jun 30, 2023
                 </div>
               </div>
@@ -215,45 +258,47 @@ export default function Dashboard() {
               {/* 🔥🔥 BAR GRAPH (updated) */}
               <div className="mt-6 h-48">
                 <ResponsiveContainer>
-                  <BarChart data={topLineData} margin={{ top: 10, right: 16, left: 0, bottom: 0 }}>
-                    <CartesianGrid stroke="rgba(160, 32, 240, 0.2)" strokeDasharray="3 3" />
-                    <XAxis dataKey="month" stroke="#A0A0A0" tick={{ fill: "#A0A0A0" }} />
-                    <YAxis stroke="#A0A0A0" tick={{ fill: "#A0A0A0" }} tickFormatter={(value) => `₹${value}K`} />
+                  <BarChart data={topLineData.length > 0 ? topLineData : []} margin={{ top: 10, right: 16, left: 0, bottom: 0 }}>
+                    <CartesianGrid stroke="rgba(11, 180, 124, 0.2)" strokeDasharray="3 3" />
+                    <XAxis dataKey="month" stroke="#4A4A4A" tick={{ fill: "#4A4A4A" }} />
+                    <YAxis stroke="#4A4A4A" tick={{ fill: "#4A4A4A" }} tickFormatter={(value) => `₹${value}K`} />
                 <Tooltip
                     labelFormatter={(label) => `Month: ${label}`}
                     formatter={(value) => [`₹${value}K`, "Revenue"]} 
                     contentStyle={{
                     borderRadius: "1rem",
-                    borderColor: "rgba(160, 32, 240, 0.3)",
-                    backgroundColor: "rgba(26, 26, 26, 0.95)",
-                    color: "#FFFFFF",
+                    borderColor: "rgba(11, 180, 124, 0.3)",
+                    backgroundColor: "rgba(247, 248, 250, 0.95)",
+                    color: "#4A4A4A",
                     }}
                 />
 
-                    <Legend verticalAlign="top" align="right" iconType="circle" wrapperStyle={{ paddingBottom: 8, color: "#FFFFFF" }} />
-                    <Bar dataKey="totalSales" name="Revenue" fill="#A020F0" radius={[10, 10, 0, 0]} />
+                    <Legend verticalAlign="top" align="right" iconType="circle" wrapperStyle={{ paddingBottom: 8, color: "#4A4A4A" }} />
+                    <Bar dataKey="totalSales" name="Revenue" fill="#0BB47C" radius={[10, 10, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
             </article>
 
             <article className="card-neon">
-              <p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#A0A0A0]">Summary</p>
-              <p className="mt-2 text-xs text-[#A0A0A0]">Jan 1, 2023 – Jun 30, 2023</p>
+              <p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#4A4A4A]">Summary</p>
+              <p className="mt-2 text-xs text-[#4A4A4A]">Jan 1, 2023 – Jun 30, 2023</p>
 
               <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                {summaryStats.map((stat) => (
+                {summaryStats.length > 0 ? summaryStats.map((stat) => (
                   <article key={stat.label} className="glass-card rounded-2xl p-4">
                     <div className="flex items-center justify-between">
-                      <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#A0A0A0]">{stat.label}</p>
+                      <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#4A4A4A]">{stat.label}</p>
                       <span className={`text-xs font-semibold ${stat.trendTone}`}>{stat.trend}</span>
                     </div>
-                    <p className="mt-3 text-xl font-semibold text-white">{stat.value}</p>
-                    <div className="mt-4 h-2 w-full rounded-full bg-[#1A1A1A]">
-                      <div className={`h-2 rounded-full ${stat.progressTone} neon-glow-purple`} style={{ width: `${stat.progress}%` }} />
+                    <p className="mt-3 text-xl font-semibold text-[#4A4A4A]">{stat.value}</p>
+                    <div className="mt-4 h-2 w-full rounded-full bg-[#D9D9D9]">
+                      <div className={`h-2 rounded-full bg-[#0BB47C]`} style={{ width: `${stat.progress}%` }} />
                     </div>
                   </article>
-                ))}
+                )) : (
+                  <div className="col-span-2 text-center text-[#4A4A4A] py-4">No summary data available</div>
+                )}
               </div>
             </article>
           </section>
@@ -265,11 +310,11 @@ export default function Dashboard() {
             <article className="card-neon">
               <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                  <p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#A0A0A0]">Sales Funnel</p>
-                  <p className="text-xs text-[#A0A0A0]">Jan 1, 2023 – Jun 30, 2023</p>
+                  <p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#4A4A4A]">Sales Funnel</p>
+                  <p className="text-xs text-[#4A4A4A]">Jan 1, 2023 – Jun 30, 2023</p>
                 </div>
                 <div className="mt-3 flex items-center gap-2">
-                  <span className="inline-flex items-center gap-1 rounded-full bg-neon-gradient-blur px-3 py-1 text-xs font-semibold text-white neon-glow-purple">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-[#0BB47C] px-3 py-1 text-xs font-semibold text-white">
                     +4.8% completion
                   </span>
                 </div>
@@ -277,41 +322,43 @@ export default function Dashboard() {
 
               <div className="mt-6 h-40">
                 <ResponsiveContainer>
-                  <AreaChart data={areaData}>
+                  <AreaChart data={areaData.length > 0 ? areaData : []}>
                     <defs>
                       <linearGradient id="funnelGradient" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor="#A020F0" />
-                        <stop offset="40%" stopColor="#D400FF" />
-                        <stop offset="80%" stopColor="#FF00CC" />
-                        <stop offset="100%" stopColor="#A020F0" />
+                        <stop offset="0%" stopColor="#0BB47C" />
+                        <stop offset="40%" stopColor="#067E59" />
+                        <stop offset="80%" stopColor="#4DA7FF" />
+                        <stop offset="100%" stopColor="#0BB47C" />
                       </linearGradient>
                     </defs>
-                    <XAxis dataKey="name" stroke="#A0A0A0" tick={{ fill: "#A0A0A0", fontSize: 12 }} />
+                    <XAxis dataKey="name" stroke="#4A4A4A" tick={{ fill: "#4A4A4A", fontSize: 12 }} />
                     <YAxis hide />
                     <Tooltip
                       formatter={(value) => [`${value}%`, "Stage completion"]}
 
                       contentStyle={{
                         borderRadius: "1rem",
-                        borderColor: "rgba(160, 32, 240, 0.3)",
-                        backgroundColor: "rgba(26, 26, 26, 0.95)",
-                        color: "#FFFFFF"
+                        borderColor: "rgba(11, 180, 124, 0.3)",
+                        backgroundColor: "rgba(247, 248, 250, 0.95)",
+                        color: "#4A4A4A"
                       }}
                     />
-                    <Area type="monotone" dataKey="value" stroke="#A020F0" fill="url(#funnelGradient)" strokeWidth={0} />
+                    <Area type="monotone" dataKey="value" stroke="#0BB47C" fill="url(#funnelGradient)" strokeWidth={0} />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
 
               <div className="mt-6 grid gap-4 rounded-3xl glass-card p-4 sm:grid-cols-5">
-                {funnelStages.map((stage) => (
+                {funnelStages.length > 0 ? funnelStages.map((stage) => (
                   <div key={stage.step} className="flex flex-col gap-1 rounded-2xl glass p-3">
-                    <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#A0A0A0]">{stage.step}</p>
-                    <p className="text-lg font-semibold text-white">{stage.value}</p>
-                    <p className="text-[0.65rem] text-[#A0A0A0]">{stage.conversion}</p>
-                    <div className="mt-auto h-2 rounded-full bg-neon-gradient" />
+                    <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#4A4A4A]">{stage.step}</p>
+                    <p className="text-lg font-semibold text-[#4A4A4A]">{stage.value}</p>
+                    <p className="text-[0.65rem] text-[#4A4A4A]">{stage.conversion}</p>
+                    <div className="mt-auto h-2 rounded-full bg-[#0BB47C]" />
                   </div>
-                ))}
+                )) : (
+                  <div className="col-span-5 text-center text-[#4A4A4A] py-4">No funnel data available</div>
+                )}
               </div>
             </article>
 
@@ -319,46 +366,46 @@ export default function Dashboard() {
             <article className="card-neon">
               <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                  <p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#A0A0A0]">Average Lifetime Revenue</p>
-                  <p className="text-xs text-[#A0A0A0]">Jan 1, 2023 – Jun 30, 2023</p>
+                  <p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#4A4A4A]">Average Lifetime Revenue</p>
+                  <p className="text-xs text-[#4A4A4A]">Jan 1, 2023 – Jun 30, 2023</p>
                 </div>
-                <span className="mt-3 rounded-full bg-neon-gradient px-3 py-1 text-xs font-semibold text-white neon-glow-purple">
+                <span className="mt-3 rounded-full bg-[#0BB47C] px-3 py-1 text-xs font-semibold text-white">
                   +₹56K YoY
                 </span>
               </div>
 
               <div className="mt-6 h-48">
                 <ResponsiveContainer>
-                  <LineChart data={lifetimeRevenueData} margin={{ top: 10, right: 16, left: 0, bottom: 0 }}>
-                    <CartesianGrid stroke="rgba(160, 32, 240, 0.2)" strokeDasharray="3 3" />
-                    <XAxis dataKey="month" stroke="#A0A0A0" tick={{ fill: "#A0A0A0" }} />
-                    <YAxis stroke="#A0A0A0" tick={{ fill: "#A0A0A0" }} tickFormatter={(value) => `₹${value}K`} />
+                  <LineChart data={lifetimeRevenueData.length > 0 ? lifetimeRevenueData : []} margin={{ top: 10, right: 16, left: 0, bottom: 0 }}>
+                    <CartesianGrid stroke="rgba(11, 180, 124, 0.2)" strokeDasharray="3 3" />
+                    <XAxis dataKey="month" stroke="#4A4A4A" tick={{ fill: "#4A4A4A" }} />
+                    <YAxis stroke="#4A4A4A" tick={{ fill: "#4A4A4A" }} tickFormatter={(value) => `₹${value}K`} />
                     <Tooltip
                       labelFormatter={(label) => `Month: ${label}`}
                       formatter={(value, name) => [`₹${value}K`, name]}
                       contentStyle={{
                         borderRadius: "1rem",
-                        borderColor: "rgba(160, 32, 240, 0.3)",
-                        backgroundColor: "rgba(26, 26, 26, 0.95)",
-                        color: "#FFFFFF"
+                        borderColor: "rgba(11, 180, 124, 0.3)",
+                        backgroundColor: "rgba(247, 248, 250, 0.95)",
+                        color: "#4A4A4A"
                       }}
                     />
-                    <Legend verticalAlign="top" align="right" iconType="circle" wrapperStyle={{ paddingBottom: 8, color: "#FFFFFF" }} />
+                    <Legend verticalAlign="top" align="right" iconType="circle" wrapperStyle={{ paddingBottom: 8, color: "#4A4A4A" }} />
 
                     <Line
                       type="monotone"
                       dataKey="newCustomers"
-                      stroke="#FF00CC"
+                      stroke="#4DA7FF"
                       strokeWidth={3}
-                      dot={{ r: 3, fill: "#FF00CC" }}
+                      dot={{ r: 3, fill: "#4DA7FF" }}
                       name="New customers"
                     />
                     <Line
                       type="monotone"
                       dataKey="returningCustomers"
-                      stroke="#A020F0"
+                      stroke="#0BB47C"
                       strokeWidth={3}
-                      dot={{ r: 3, fill: "#A020F0" }}
+                      dot={{ r: 3, fill: "#0BB47C" }}
                       name="Returning customers"
                     />
                   </LineChart>
@@ -372,47 +419,51 @@ export default function Dashboard() {
             <article className="card-neon">
               <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                  <p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#A0A0A0]">Customer Retention</p>
-                  <p className="text-xs text-[#A0A0A0]">Jan 1, 2023 – Jun 30, 2023</p>
+                  <p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#4A4A4A]">Customer Retention</p>
+                  <p className="text-xs text-[#4A4A4A]">Jan 1, 2023 – Jun 30, 2023</p>
                 </div>
-                <span className="mt-3 rounded-full bg-neon-gradient-blur px-3 py-1 text-xs font-semibold text-white neon-glow-purple">
+                <span className="mt-3 rounded-full bg-[#0BB47C] px-3 py-1 text-xs font-semibold text-white">
                   87% avg retention
                 </span>
               </div>
 
               <div className="mt-6 overflow-x-auto">
-                <table className="min-w-full border-separate border-spacing-2 text-xs font-semibold uppercase tracking-[0.2em] text-white">
+                <table className="min-w-full border-separate border-spacing-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#4A4A4A]">
                   <thead>
                     <tr>
-                      <th className="px-3 py-2 text-left text-[#A0A0A0]">Month</th>
+                      <th className="px-3 py-2 text-left text-[#4A4A4A]">Month</th>
                       {["Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6"].map((label) => (
-                        <th key={label} className="px-3 py-2 text-center text-[#A0A0A0]">
+                        <th key={label} className="px-3 py-2 text-center text-[#4A4A4A]">
                           {label}
                         </th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
-                    {retentionMatrix.map((row) => (
+                    {retentionMatrix.length > 0 ? retentionMatrix.map((row) => (
                       <tr key={row.month}>
-                        <td className="px-3 py-2 text-left text-sm font-semibold text-white">{row.month}</td>
+                        <td className="px-3 py-2 text-left text-sm font-semibold text-[#4A4A4A]">{row.month}</td>
                         {row.cohorts.map((value, idx) => (
                           <td key={`${row.month}-${idx}`} className="px-1 py-1 text-center">
-                            <div className={`rounded-xl bg-neon-gradient px-2 py-3 text-xs font-semibold neon-glow-purple`}>
+                            <div className={`rounded-xl ${getRetentionColor(value)} px-2 py-3 text-xs font-semibold text-white`}>
                               {value}
                             </div>
                           </td>
                         ))}
                       </tr>
-                    ))}
+                    )) : (
+                      <tr>
+                        <td colSpan="7" className="px-3 py-4 text-center text-[#4A4A4A]">No retention data available</td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>
 
-              <div className="mt-6 flex flex-wrap gap-3 text-xs text-[#A0A0A0]">
+              <div className="mt-6 flex flex-wrap gap-3 text-xs text-[#4A4A4A]">
                 {retentionLegend.map((item) => (
                   <span key={item.label} className="inline-flex items-center gap-2 rounded-full glass px-3 py-1">
-                    <span className="h-2 w-6 rounded-full bg-neon-gradient" />
+                    <span className={`h-2 w-6 rounded-full ${item.tone}`} />
                     {item.label}
                   </span>
                 ))}
@@ -422,10 +473,10 @@ export default function Dashboard() {
             <article className="flex flex-col gap-4 card-neon">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#A0A0A0]">Action Center</p>
-                  <p className="text-xs text-[#A0A0A0]">Keep momentum high with these next steps</p>
+                  <p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#4A4A4A]">Action Center</p>
+                  <p className="text-xs text-[#4A4A4A]">Keep momentum high with these next steps</p>
                 </div>
-                <span className="rounded-full bg-neon-gradient px-3 py-1 text-xs font-semibold text-white neon-glow-purple">3 open</span>
+                <span className="rounded-full bg-[#0BB47C] px-3 py-1 text-xs font-semibold text-white">3 open</span>
               </div>
 
               <ul className="space-y-3">
@@ -434,8 +485,8 @@ export default function Dashboard() {
                     key={item.title}
                     className="rounded-2xl glass-card px-4 py-3 text-sm font-medium"
                   >
-                    <p className="text-white">{item.title}</p>
-                    <div className="mt-2 flex items-center justify-between text-xs font-semibold uppercase tracking-[0.2em] text-[#A0A0A0]">
+                    <p className="text-[#4A4A4A]">{item.title}</p>
+                    <div className="mt-2 flex items-center justify-between text-xs font-semibold uppercase tracking-[0.2em] text-[#4A4A4A]">
                       <span>{item.owner}</span>
                       <span>{item.due}</span>
                     </div>

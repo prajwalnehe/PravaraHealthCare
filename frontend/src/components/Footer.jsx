@@ -64,7 +64,7 @@ const socialLinks = [
 
 export default function Footer() {
   return (
-    <footer className="relative mt-10 border-t border-[#A020F0]/20 bg-[#000000] text-white">
+    <footer className="relative mt-10 border-t border-[#D9D9D9] bg-white text-[#4A4A4A]">
       <div className="absolute inset-0 bg-neon-gradient-radial opacity-30" />
       <div className="relative mx-auto grid max-w-7xl gap-10 px-4 py-10 sm:gap-12 sm:px-6 sm:py-12 md:grid-cols-2 lg:grid-cols-4">
         <div className="space-y-4 sm:space-y-5">
@@ -73,11 +73,11 @@ export default function Footer() {
               <span className="text-base font-semibold sm:text-lg">PH</span>
             </div>
             <div>
-              <p className="text-sm font-semibold text-white sm:text-base">Pravara Health Care</p>
-              <p className="text-[0.55rem] font-medium uppercase tracking-[0.3em] text-[#A0A0A0] sm:text-xs">Employee CRM Platform</p>
+              <p className="text-sm font-semibold text-[#4A4A4A] sm:text-base">Pravara Health Care</p>
+              <p className="text-[0.55rem] font-medium uppercase tracking-[0.3em] text-[#4A4A4A] sm:text-xs">Employee CRM Platform</p>
             </div>
           </div>
-          <p className="max-w-xs text-xs text-[#A0A0A0] sm:text-sm">
+          <p className="max-w-xs text-xs text-[#4A4A4A] sm:text-sm">
             Empowering Pravara Health Care teams with real-time employee intelligence, payroll transparency, and operational alignment.
           </p>
           <div className="flex flex-wrap gap-2.5 sm:gap-3">
@@ -85,7 +85,7 @@ export default function Footer() {
               <a
                 key={link.label}
                 href={link.href}
-                className="inline-flex items-center gap-2 rounded-full glass px-3 py-1.5 text-[0.65rem] font-semibold text-white transition hover:border-[#A020F0] hover:text-[#A020F0] hover:neon-glow-purple sm:text-xs"
+                className="inline-flex items-center gap-2 rounded-full glass px-3 py-1.5 text-[0.65rem] font-semibold text-[#4A4A4A] transition hover:border-[#0BB47C] hover:text-[#0BB47C] sm:text-xs"
               >
                 {link.icon}
                 {link.label}
@@ -95,15 +95,15 @@ export default function Footer() {
         </div>
 
         <div>
-          <h3 className="text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-[#A0A0A0] sm:text-sm">Quick Links</h3>
-          <ul className="mt-4 space-y-2 text-sm text-white">
+          <h3 className="text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-[#4A4A4A] sm:text-sm">Quick Links</h3>
+          <ul className="mt-4 space-y-2 text-sm text-[#4A4A4A]">
             {quickLinks.map((link) => (
               <li key={link.label}>
                 <a
-                  className="group inline-flex items-center gap-3 rounded-xl border border-transparent px-3 py-2 text-xs transition hover:border-[#A020F0]/50 hover:bg-neon-gradient-blur hover:text-white sm:text-sm"
+                  className="group inline-flex items-center gap-3 rounded-xl border border-transparent px-3 py-2 text-xs transition hover:border-[#0BB47C]/50 hover:bg-[#F7F8FA] hover:text-[#4A4A4A] sm:text-sm"
                   href={link.href}
                 >
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full glass text-[#A020F0] sm:h-8 sm:w-8">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full glass text-[#0BB47C] sm:h-8 sm:w-8">
                     {link.icon}
                   </span>
                   {link.label}
@@ -114,11 +114,11 @@ export default function Footer() {
         </div>
 
         <div>
-          <h3 className="text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-[#A0A0A0] sm:text-sm">Policies</h3>
-          <ul className="mt-4 space-y-2 text-sm text-white">
+          <h3 className="text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-[#4A4A4A] sm:text-sm">Policies</h3>
+          <ul className="mt-4 space-y-2 text-sm text-[#4A4A4A]">
             {policyLinks.map((link) => (
               <li key={link.label}>
-                <a className="inline-flex items-center gap-2 text-xs transition hover:text-[#A020F0] sm:text-sm" href={link.href}>
+                <a className="inline-flex items-center gap-2 text-xs transition hover:text-[#0BB47C] sm:text-sm" href={link.href}>
                   <span className="h-1.5 w-1.5 rounded-full bg-neon-gradient" />
                   {link.label}
                 </a>
@@ -129,34 +129,34 @@ export default function Footer() {
 
         <div className="space-y-4 sm:space-y-5">
           <div>
-            <h3 className="text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-[#A0A0A0] sm:text-sm">Contact</h3>
-            <ul className="mt-4 space-y-2 text-xs text-white sm:text-sm">
+            <h3 className="text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-[#4A4A4A] sm:text-sm">Contact</h3>
+            <ul className="mt-4 space-y-2 text-xs text-[#4A4A4A] sm:text-sm">
               <li>Pravara Health Care HQ</li>
               <li>Nashik Road, Pravara Nagar</li>
               <li>Maharashtra 422101</li>
             </ul>
           </div>
-          <div className="rounded-2xl glass-card px-4 py-3 text-xs text-white sm:text-sm">
-            <p className="text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-[#A0A0A0] sm:text-xs">Email & Support</p>
-            <a className="mt-2 block text-sm font-semibold text-white transition hover:text-[#A020F0]" href="mailto:support@pravarahealthcare.in">
+          <div className="rounded-2xl glass-card px-4 py-3 text-xs text-[#4A4A4A] sm:text-sm">
+            <p className="text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-[#4A4A4A] sm:text-xs">Email & Support</p>
+            <a className="mt-2 block text-sm font-semibold text-[#4A4A4A] transition hover:text-[#0BB47C]" href="mailto:support@pravarahealthcare.in">
               support@pravarahealthcare.in
             </a>
-            <p className="mt-2 text-xs text-[#A0A0A0] sm:text-sm">Phone: +91 1800-123-4521</p>
+            <p className="mt-2 text-xs text-[#4A4A4A] sm:text-sm">Phone: +91 1800-123-4521</p>
           </div>
         </div>
       </div>
 
-      <div className="relative border-t border-[#A020F0]/20 bg-[#0A0A0A]">
-        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-5 text-[0.65rem] font-medium text-[#A0A0A0] sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-6 sm:text-xs">
+      <div className="relative border-t border-[#D9D9D9] bg-[#F7F8FA]">
+        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-5 text-[0.65rem] font-medium text-[#4A4A4A] sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-6 sm:text-xs">
           <p>© {new Date().getFullYear()} Pravara Health Care. All rights reserved.</p>
           <div className="flex flex-wrap gap-3 sm:gap-4">
-            <a className="transition hover:text-[#A020F0]" href="#">
+            <a className="transition hover:text-[#0BB47C]" href="#">
               Support Portal
             </a>
-            <a className="transition hover:text-[#A020F0]" href="#">
+            <a className="transition hover:text-[#0BB47C]" href="#">
               Status
             </a>
-            <a className="transition hover:text-[#A020F0]" href="#">
+            <a className="transition hover:text-[#0BB47C]" href="#">
               Accessibility
             </a>
           </div>

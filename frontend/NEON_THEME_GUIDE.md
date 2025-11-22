@@ -175,3 +175,7 @@ The theme is configured in `src/index.css` using Tailwind CSS v4's `@theme` dire
 - All animations are smooth and performant
 - Glassmorphism effects use backdrop-filter for modern browsers
 
+
+
+
+

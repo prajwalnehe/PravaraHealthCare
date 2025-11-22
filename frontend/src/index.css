@@ -5,34 +5,35 @@
    ============================================ */
 @theme {
   /* Primary Colors */
-  --color-primary: #A020F0; /* Vibrant Purple */
-  --color-secondary: #FF00CC; /* Hot Pink */
-  --color-accent: #D400FF; /* Magenta */
+  --color-primary: #0BB47C; /* Primary Green */
+  --color-secondary: #067E59; /* Dark Green */
+  --color-accent: #4DA7FF; /* Sky Blue */
   
   /* Gradient Colors */
-  --color-gradient-start: #A020F0; /* Vibrant Purple */
-  --color-gradient-end: #FF00CC; /* Hot Pink */
-  --color-gradient-mid: #D400FF; /* Magenta */
+  --color-gradient-start: #0BB47C; /* Primary Green */
+  --color-gradient-end: #067E59; /* Dark Green */
+  --color-gradient-mid: #4DA7FF; /* Sky Blue */
   
   /* Background Colors */
-  --color-bg-primary: #000000; /* Deep Black */
-  --color-bg-secondary: #0A0A0A; /* Charcoal Gray */
-  --color-bg-tertiary: #1A1A1A; /* Slightly lighter for cards */
+  --color-bg-primary: #F7F8FA; /* Light Gray Background */
+  --color-bg-secondary: #FFFFFF; /* White */
+  --color-bg-tertiary: #F7F8FA; /* Light Gray Background */
   
   /* Text Colors */
-  --color-text-primary: #FFFFFF; /* White */
-  --color-text-secondary: #E5E5E5; /* Soft Gray */
-  --color-text-muted: #A0A0A0; /* Muted Gray */
+  --color-text-primary: #4A4A4A; /* Text Gray (Dark) */
+  --color-text-secondary: #4A4A4A; /* Text Gray (Dark) */
+  --color-text-muted: #4A4A4A; /* Text Gray (Dark) */
   
-  /* Neon Glow Colors */
-  --color-glow-purple: #A020F0;
-  --color-glow-pink: #FF00CC;
-  --color-glow-magenta: #D400FF;
+  /* Accent Colors */
+  --color-glow-green: #0BB47C;
+  --color-glow-blue: #4DA7FF;
+  --color-glow-yellow: #F4C542;
+  --color-glow-red: #D9534F;
   
   /* Glassmorphism Colors */
-  --color-glass-bg: rgba(255, 255, 255, 0.05);
-  --color-glass-border: rgba(160, 32, 240, 0.2);
-  --color-glass-border-hover: rgba(160, 32, 240, 0.4);
+  --color-glass-bg: rgba(255, 255, 255, 0.8);
+  --color-glass-border: rgba(11, 180, 124, 0.2);
+  --color-glass-border-hover: rgba(11, 180, 124, 0.4);
 }
 
 /* ============================================
@@ -44,7 +45,7 @@
 
 body {
   @apply bg-bg-primary text-text-primary;
-  background: linear-gradient(135deg, #000000 0%, #0A0A0A 100%);
+  background: linear-gradient(135deg, #F7F8FA 0%, #FFFFFF 100%);
   min-height: 100vh;
 }
 
@@ -53,91 +54,91 @@ body {
    ============================================ */
 .neon-glow-purple {
   box-shadow: 
-    0 0 10px rgba(160, 32, 240, 0.5),
-    0 0 20px rgba(160, 32, 240, 0.3),
-    0 0 30px rgba(160, 32, 240, 0.2),
-    inset 0 0 10px rgba(160, 32, 240, 0.1);
+    0 0 10px rgba(11, 180, 124, 0.5),
+    0 0 20px rgba(11, 180, 124, 0.3),
+    0 0 30px rgba(11, 180, 124, 0.2),
+    inset 0 0 10px rgba(11, 180, 124, 0.1);
 }
 
 .neon-glow-pink {
   box-shadow: 
-    0 0 10px rgba(255, 0, 204, 0.5),
-    0 0 20px rgba(255, 0, 204, 0.3),
-    0 0 30px rgba(255, 0, 204, 0.2),
-    inset 0 0 10px rgba(255, 0, 204, 0.1);
+    0 0 10px rgba(77, 167, 255, 0.5),
+    0 0 20px rgba(77, 167, 255, 0.3),
+    0 0 30px rgba(77, 167, 255, 0.2),
+    inset 0 0 10px rgba(77, 167, 255, 0.1);
 }
 
 .neon-glow-magenta {
   box-shadow: 
-    0 0 10px rgba(212, 0, 255, 0.5),
-    0 0 20px rgba(212, 0, 255, 0.3),
-    0 0 30px rgba(212, 0, 255, 0.2),
-    inset 0 0 10px rgba(212, 0, 255, 0.1);
+    0 0 10px rgba(6, 126, 89, 0.5),
+    0 0 20px rgba(6, 126, 89, 0.3),
+    0 0 30px rgba(6, 126, 89, 0.2),
+    inset 0 0 10px rgba(6, 126, 89, 0.1);
 }
 
 .neon-glow-gradient {
   box-shadow: 
-    0 0 20px rgba(160, 32, 240, 0.4),
-    0 0 40px rgba(255, 0, 204, 0.3),
-    0 0 60px rgba(212, 0, 255, 0.2),
-    inset 0 0 20px rgba(160, 32, 240, 0.1);
+    0 0 20px rgba(11, 180, 124, 0.4),
+    0 0 40px rgba(77, 167, 255, 0.3),
+    0 0 60px rgba(6, 126, 89, 0.2),
+    inset 0 0 20px rgba(11, 180, 124, 0.1);
 }
 
 .neon-glow-strong {
   box-shadow: 
-    0 0 20px rgba(160, 32, 240, 0.6),
-    0 0 40px rgba(255, 0, 204, 0.5),
-    0 0 60px rgba(212, 0, 255, 0.4),
-    0 0 80px rgba(160, 32, 240, 0.2);
+    0 0 20px rgba(11, 180, 124, 0.6),
+    0 0 40px rgba(77, 167, 255, 0.5),
+    0 0 60px rgba(6, 126, 89, 0.4),
+    0 0 80px rgba(11, 180, 124, 0.2);
 }
 
 .neon-glow-text {
   text-shadow: 
-    0 0 10px rgba(160, 32, 240, 0.8),
-    0 0 20px rgba(255, 0, 204, 0.6),
-    0 0 30px rgba(212, 0, 255, 0.4);
+    0 0 10px rgba(11, 180, 124, 0.8),
+    0 0 20px rgba(77, 167, 255, 0.6),
+    0 0 30px rgba(6, 126, 89, 0.4);
 }
 
 /* ============================================
    GRADIENT BACKGROUND UTILITIES
    ============================================ */
 .bg-neon-gradient {
-  background: linear-gradient(135deg, #A020F0 0%, #D400FF 50%, #FF00CC 100%);
+  background: linear-gradient(135deg, #0BB47C 0%, #067E59 50%, #4DA7FF 100%);
 }
 
 .bg-neon-gradient-radial {
-  background: radial-gradient(circle at center, rgba(160, 32, 240, 0.3) 0%, rgba(0, 0, 0, 0.8) 70%);
+  background: radial-gradient(circle at center, rgba(11, 180, 124, 0.3) 0%, rgba(247, 248, 250, 0.8) 70%);
 }
 
 .bg-neon-gradient-blur {
-  background: linear-gradient(135deg, rgba(160, 32, 240, 0.2) 0%, rgba(212, 0, 255, 0.15) 50%, rgba(255, 0, 204, 0.2) 100%);
+  background: linear-gradient(135deg, rgba(11, 180, 124, 0.2) 0%, rgba(6, 126, 89, 0.15) 50%, rgba(77, 167, 255, 0.2) 100%);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 }
 
 .bg-neon-gradient-vertical {
-  background: linear-gradient(180deg, #A020F0 0%, #D400FF 50%, #FF00CC 100%);
+  background: linear-gradient(180deg, #0BB47C 0%, #067E59 50%, #4DA7FF 100%);
 }
 
 .bg-neon-gradient-horizontal {
-  background: linear-gradient(90deg, #A020F0 0%, #D400FF 50%, #FF00CC 100%);
+  background: linear-gradient(90deg, #0BB47C 0%, #067E59 50%, #4DA7FF 100%);
 }
 
 /* ============================================
    GLASSMORPHISM UTILITIES
    ============================================ */
 .glass {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(160, 32, 240, 0.2);
+  border: 1px solid rgba(11, 180, 124, 0.2);
 }
 
 .glass-strong {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(30px);
   -webkit-backdrop-filter: blur(30px);
-  border: 1px solid rgba(160, 32, 240, 0.3);
+  border: 1px solid rgba(11, 180, 124, 0.3);
 }
 
 .glass-hover {
@@ -145,21 +146,21 @@ body {
 }
 
 .glass-hover:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(160, 32, 240, 0.5);
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(11, 180, 124, 0.5);
   box-shadow: 
-    0 0 20px rgba(160, 32, 240, 0.3),
-    0 0 40px rgba(255, 0, 204, 0.2);
+    0 0 20px rgba(11, 180, 124, 0.3),
+    0 0 40px rgba(77, 167, 255, 0.2);
 }
 
 .glass-card {
-  background: rgba(26, 26, 26, 0.6);
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(160, 32, 240, 0.2);
+  border: 1px solid rgba(217, 217, 217, 0.5);
   box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.4),
-    inset 0 0 20px rgba(160, 32, 240, 0.05);
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 0 20px rgba(11, 180, 124, 0.05);
 }
 
 /* ============================================
@@ -169,16 +170,16 @@ body {
   0%, 100% {
     opacity: 1;
     box-shadow: 
-      0 0 10px rgba(160, 32, 240, 0.5),
-      0 0 20px rgba(160, 32, 240, 0.3),
-      0 0 30px rgba(160, 32, 240, 0.2);
+      0 0 10px rgba(11, 180, 124, 0.5),
+      0 0 20px rgba(11, 180, 124, 0.3),
+      0 0 30px rgba(11, 180, 124, 0.2);
   }
   50% {
     opacity: 0.8;
     box-shadow: 
-      0 0 20px rgba(160, 32, 240, 0.7),
-      0 0 40px rgba(255, 0, 204, 0.5),
-      0 0 60px rgba(212, 0, 255, 0.3);
+      0 0 20px rgba(11, 180, 124, 0.7),
+      0 0 40px rgba(77, 167, 255, 0.5),
+      0 0 60px rgba(6, 126, 89, 0.3);
   }
 }
 
@@ -208,18 +209,18 @@ body {
    ============================================ */
 .btn-neon-primary {
   @apply relative overflow-hidden rounded-full px-6 py-3 font-semibold text-white transition-all duration-300;
-  background: linear-gradient(135deg, #A020F0 0%, #D400FF 50%, #FF00CC 100%);
+  background: linear-gradient(135deg, #0BB47C 0%, #067E59 50%, #4DA7FF 100%);
   box-shadow: 
-    0 0 20px rgba(160, 32, 240, 0.4),
-    0 0 40px rgba(255, 0, 204, 0.3),
+    0 0 20px rgba(11, 180, 124, 0.4),
+    0 0 40px rgba(77, 167, 255, 0.3),
     inset 0 0 20px rgba(255, 255, 255, 0.1);
 }
 
 .btn-neon-primary:hover {
   box-shadow: 
-    0 0 30px rgba(160, 32, 240, 0.6),
-    0 0 60px rgba(255, 0, 204, 0.5),
-    0 0 80px rgba(212, 0, 255, 0.3),
+    0 0 30px rgba(11, 180, 124, 0.6),
+    0 0 60px rgba(77, 167, 255, 0.5),
+    0 0 80px rgba(6, 126, 89, 0.3),
     inset 0 0 30px rgba(255, 255, 255, 0.15);
   transform: translateY(-2px);
 }
@@ -229,21 +230,21 @@ body {
 }
 
 .btn-neon-outline {
-  @apply relative overflow-hidden rounded-full border-2 px-6 py-3 font-semibold text-white transition-all duration-300;
-  border-color: #A020F0;
-  background: rgba(160, 32, 240, 0.05);
+  @apply relative overflow-hidden rounded-full border-2 px-6 py-3 font-semibold text-[#4A4A4A] transition-all duration-300;
+  border-color: #0BB47C;
+  background: rgba(11, 180, 124, 0.05);
   box-shadow: 
-    0 0 10px rgba(160, 32, 240, 0.3),
-    inset 0 0 10px rgba(160, 32, 240, 0.1);
+    0 0 10px rgba(11, 180, 124, 0.3),
+    inset 0 0 10px rgba(11, 180, 124, 0.1);
 }
 
 .btn-neon-outline:hover {
-  border-color: #FF00CC;
-  background: rgba(255, 0, 204, 0.1);
+  border-color: #4DA7FF;
+  background: rgba(77, 167, 255, 0.1);
   box-shadow: 
-    0 0 20px rgba(160, 32, 240, 0.5),
-    0 0 40px rgba(255, 0, 204, 0.3),
-    inset 0 0 20px rgba(255, 0, 204, 0.15);
+    0 0 20px rgba(11, 180, 124, 0.5),
+    0 0 40px rgba(77, 167, 255, 0.3),
+    inset 0 0 20px rgba(77, 167, 255, 0.15);
   transform: translateY(-2px);
 }
 
@@ -256,41 +257,41 @@ body {
    ============================================ */
 .card-neon {
   @apply relative overflow-hidden rounded-3xl p-6 transition-all duration-300;
-  background: rgba(26, 26, 26, 0.6);
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(160, 32, 240, 0.2);
+  border: 1px solid rgba(217, 217, 217, 0.5);
   box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.4),
-    inset 0 0 20px rgba(160, 32, 240, 0.05);
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 0 20px rgba(11, 180, 124, 0.05);
 }
 
 .card-neon:hover {
-  border-color: rgba(160, 32, 240, 0.4);
+  border-color: rgba(11, 180, 124, 0.4);
   box-shadow: 
-    0 12px 48px rgba(0, 0, 0, 0.5),
-    0 0 30px rgba(160, 32, 240, 0.3),
-    inset 0 0 30px rgba(160, 32, 240, 0.1);
+    0 12px 48px rgba(0, 0, 0, 0.15),
+    0 0 30px rgba(11, 180, 124, 0.3),
+    inset 0 0 30px rgba(11, 180, 124, 0.1);
   transform: translateY(-4px);
 }
 
 .card-neon-gradient {
   @apply relative overflow-hidden rounded-3xl p-6 text-white transition-all duration-300;
-  background: linear-gradient(135deg, rgba(160, 32, 240, 0.3) 0%, rgba(212, 0, 255, 0.2) 50%, rgba(255, 0, 204, 0.3) 100%);
+  background: linear-gradient(135deg, rgba(11, 180, 124, 0.3) 0%, rgba(6, 126, 89, 0.2) 50%, rgba(77, 167, 255, 0.3) 100%);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(160, 32, 240, 0.3);
+  border: 1px solid rgba(11, 180, 124, 0.3);
   box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.4),
-    0 0 20px rgba(160, 32, 240, 0.2),
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    0 0 20px rgba(11, 180, 124, 0.2),
     inset 0 0 20px rgba(255, 255, 255, 0.05);
 }
 
 .card-neon-gradient:hover {
   box-shadow: 
-    0 12px 48px rgba(0, 0, 0, 0.5),
-    0 0 40px rgba(160, 32, 240, 0.4),
-    0 0 60px rgba(255, 0, 204, 0.3),
+    0 12px 48px rgba(0, 0, 0, 0.15),
+    0 0 40px rgba(11, 180, 124, 0.4),
+    0 0 60px rgba(77, 167, 255, 0.3),
     inset 0 0 30px rgba(255, 255, 255, 0.1);
   transform: translateY(-4px);
 }
@@ -299,16 +300,16 @@ body {
    TEXT GRADIENT UTILITIES
    ============================================ */
 .text-neon-gradient {
-  background: linear-gradient(135deg, #A020F0 0%, #D400FF 50%, #FF00CC 100%);
+  background: linear-gradient(135deg, #0BB47C 0%, #067E59 50%, #4DA7FF 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .text-neon-glow {
-  color: #FFFFFF;
+  color: #4A4A4A;
   text-shadow: 
-    0 0 10px rgba(160, 32, 240, 0.8),
-    0 0 20px rgba(255, 0, 204, 0.6),
-    0 0 30px rgba(212, 0, 255, 0.4);
+    0 0 10px rgba(11, 180, 124, 0.8),
+    0 0 20px rgba(77, 167, 255, 0.6),
+    0 0 30px rgba(6, 126, 89, 0.4);
 }
